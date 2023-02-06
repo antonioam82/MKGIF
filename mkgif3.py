@@ -39,6 +39,7 @@ def main():
     gm(args)
 
 def show(f):
+    print("GENERATING VIEW...")
     try:
         animation = pyglet.image.load_animation(f)
         bin = pyglet.image.atlas.TextureBin()
@@ -114,3 +115,4 @@ def gm(args):
 
 if __name__=='__main__':
     main()
+
