@@ -66,7 +66,7 @@ def gm(args):
     print(color[index]+bright[b_index]+pyfiglet.figlet_format('MKGIF',font='graffiti')+Fore.RESET+Style.RESET_ALL)
     file_extension = pathlib.Path(args.source).suffix
     result_extension = pathlib.Path(args.destination).suffix
-    if file_extension in supported_formats and result_extension == '.gif':
+    if (file_extension in supported_formats or file_extension == '.webp') and result_extension == '.gif':
         if args.source in os.listdir():
             try:
                 if file_extension in supported_formats:
