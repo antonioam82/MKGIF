@@ -17,6 +17,8 @@ color = [Fore.RED,Fore.GREEN,Fore.YELLOW,Fore.BLUE,Fore.CYAN,
 
 bright = [Style.DIM,Style.NORMAL,Style.BRIGHT]
 
+supported_formats = ['.mp4','.avi','.mov','.wmv','.rm']
+
 index = random.randint(0,6)
 b_index = random.randint(0,2)
 
@@ -64,10 +66,10 @@ def gm(args):
     print(color[index]+bright[b_index]+pyfiglet.figlet_format('MKGIF',font='graffiti')+Fore.RESET+Style.RESET_ALL)
     file_extension = pathlib.Path(args.source).suffix
     result_extension = pathlib.Path(args.destination).suffix
-    if (file_extension == '.mp4' or file_extension == '.webp') and result_extension == '.gif':
+    if file_extension in supported_formats and result_extension == '.gif':
         if args.source in os.listdir():
             try:
-                if file_extension == '.mp4':
+                if file_extension in supported_formats:
                     probe = ffmpeg.probe(args.source)
                     video_streams = [stream for stream in probe["streams"] if stream["codec_type"] == "video"]
             
