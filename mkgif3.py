@@ -110,7 +110,7 @@ def gm(args):
         else:
             print(f"FILE NOT FOUND: File '{args.source}' not found.")
     else:
-        print("WRONG FILE FORMAT: Source file must be '.mp4' or '.webp' and result file must be '.gif'.")
+        print("WRONG FORMAT: Source file must be '.mp4', '.avi', '.mov', '.wmv', '.rm' or '.webp' and result file must be '.gif'.")
 
 if __name__=='__main__':
     main()
