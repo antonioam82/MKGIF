@@ -53,6 +53,7 @@ def show(f):
         def on_draw():
             sprite.draw()
         pyglet.app.run()
+        print(f"Successfully generated view from '{f}'.")
     except Exception as e:
         print("UNEXPECTED ERROR: ",str(e))
 
