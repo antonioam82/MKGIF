@@ -12,15 +12,15 @@ from colorama import Fore, init, Style
 import os
 
 init()
-color = [Fore.RED,Fore.GREEN,Fore.YELLOW,Fore.BLUE,Fore.CYAN,
-                      Fore.MAGENTA,Fore.WHITE]
+color = {0:Fore.RED,1:Fore.GREEN,2:Fore.YELLOW,
+         3:Fore.BLUE,4:Fore.CYAN,5:Fore.MAGENTA,6:Fore.WHITE}
 
-bright = [Style.DIM,Style.NORMAL,Style.BRIGHT]
+bright = {0:Style.DIM,1:Style.NORMAL,2:Style.BRIGHT}
 
 supported_formats = ['.mp4','.avi','.mov','.wmv','.rm']
 
-index = random.randint(0,6)
-b_index = random.randint(0,2)
+c_index = color[random.randint(0,6)]
+b_index = bright[random.randint(0,2)]
 
 def main():
 
@@ -65,7 +65,7 @@ def get_size_format(b, factor=1024, suffix="B"):
 	return f"{b:.4f}Y{suffix}"
  
 def gm(args):
-    print(color[index]+bright[b_index]+pyfiglet.figlet_format('MKGIF',font='graffiti')+Fore.RESET+Style.RESET_ALL)
+    print(c_index+b_index+pyfiglet.figlet_format('MKGIF',font='graffiti')+Fore.RESET+Style.RESET_ALL)
     file_extension = pathlib.Path(args.source).suffix
     result_extension = pathlib.Path(args.destination).suffix
     if (file_extension in supported_formats or file_extension == '.webp') and result_extension == '.gif':
