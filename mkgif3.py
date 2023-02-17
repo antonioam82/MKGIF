@@ -1,4 +1,4 @@
-from moviepy.editor import *
+from moviepy.editor import VideoFileClip
 #import sys
 from PIL import Image
 import pyfiglet
@@ -116,4 +116,5 @@ def gm(args):
 
 if __name__=='__main__':
     main()
+
 
