@@ -83,7 +83,7 @@ def gm(args):
                         duration = float(video_streams[0]['duration'])
 
                     if args.start < duration:
-                        clip = (VideoFileClip(args.source)
+                        clip = (VideoFileClip(args.source,audio=False)
                         .subclip((0,args.start),
                              (0,duration))
                         .resize(args.size/100)
