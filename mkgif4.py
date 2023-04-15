@@ -27,15 +27,21 @@ def main():
                                      epilog = "REPO: https://github.com/antonioam82/MKGIF")
     parser.add_argument('-src','--source',required=True,type=check_source_ext,help='Nombre archivo original')
     parser.add_argument('-dest','--destination',default='my_gif.gif',type=check_result_ext,help='Nombre archivo destino')
-    parser.add_argument('-st','--start',default=0.0,type=float,help='Segundo inicial del gif')
-    parser.add_argument('-e','--end',default=None,type=str,help='Segundo final del gif')
+    parser.add_argument('-st','--start',default=0.0,type=check_time,help='Segundo inicial del gif')
+    parser.add_argument('-e','--end',default=None,type=check_time,help='Segundo final del gif')
     parser.add_argument('-shw','--show',help='Mostrar resultado',action='store_true')
-    parser.add_argument('-sz','--size',default=100,type=int,help='Tamaño relativo (100 por defecto)')
+    parser.add_argument('-sz','--size',default=100,type=check_positive,help='Tamaño relativo (100 por defecto)')
     parser.add_argument('-spd','--speed',default=100,type=check_positive,help='Velocidad relativa de animación (100 por defecto)')
     parser.add_argument('-fps','--fraps',default=None,type=int,help='Frames por segundo')
 
     args=parser.parse_args()
     gm(args)
+
+def check_time(val):
+    time = float(val)
+    if time < 0.0:
+        raise argparse.ArgumentTypeError("Time value must be equal or bigger than 0.00 ('%s' is not valid)." % val)
+    return val
 
 def check_positive(val):
     ivalue = int(val)
