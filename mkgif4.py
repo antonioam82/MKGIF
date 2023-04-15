@@ -18,18 +18,15 @@ color = {0:Fore.RED,1:Fore.GREEN,2:Fore.YELLOW,
 
 bright = {0:Style.DIM,1:Style.NORMAL,2:Style.BRIGHT}
 
-#supported_formats = ['.mp4','.avi','.mov','.wmv','.rm']
-
 c_index = color[random.randint(0,6)]
 b_index = bright[random.randint(0,2)]
 
 def main():
-    # INTRODUCCIÓN DE ARGUMENTOS
-    parser = argparse.ArgumentParser(prog="MKGIF 2.0",conflict_handler='resolve',
+    parser = argparse.ArgumentParser(prog="MKGIF 2.1",conflict_handler='resolve',
                                      description="Create gifs from videos in command line or convert '.webp' files into '.gif'.",
                                      epilog = "REPO: https://github.com/antonioam82/MKGIF")
     parser.add_argument('-src','--source',required=True,type=check_source_ext,help='Nombre archivo original')
-    parser.add_argument('-dest','--destination',default='my_gif.gif',type=str,help='Nombre archivo destino')
+    parser.add_argument('-dest','--destination',default='my_gif.gif',type=check_result_ext,help='Nombre archivo destino')
     parser.add_argument('-st','--start',default=0.0,type=float,help='Segundo inicial del gif')
     parser.add_argument('-e','--end',default=None,type=str,help='Segundo final del gif')
     parser.add_argument('-shw','--show',help='Mostrar resultado',action='store_true')
@@ -43,14 +40,20 @@ def main():
 def check_positive(val):
     ivalue = int(val)
     if ivalue <= 0:
-        raise argparse.ArgumentTypeError("Speed value must be positive (%s is not valid)." % val)
+        raise argparse.ArgumentTypeError("Speed value must be positive ('%s' is not valid)." % val)
     return ivalue
 
 def check_source_ext(file):
     supported_formats = ['.mp4','.avi','.mov','.wmv','.rm','.webp']
     file_extension = pathlib.Path(file).suffix
     if file_extension not in supported_formats:
-        raise argparse.ArgumentTypeError("Source file must be '.mp4', '.avi', '.mov', '.wmv', '.rm' or '.webp' (%s is not valid)." % file_extension)
+        raise argparse.ArgumentTypeError("Source file must be '.mp4', '.avi', '.mov', '.wmv', '.rm' or '.webp' ('%s' is not valid)." % file_extension)
+    return file
+
+def check_result_ext(file):
+    file_extension = pathlib.Path(file).suffix
+    if file_extension != '.gif':
+        raise argparse.ArgumentTypeError("Result file must be '.gif' ('%s' is not valid)." % file_extension)
     return file
 
 def show(f):
@@ -82,8 +85,6 @@ def get_size_format(b, factor=1024, suffix="B"):
 def gm(args):
     print(c_index+b_index+pyfiglet.figlet_format('MKGIF',font='graffiti')+Fore.RESET+Style.RESET_ALL)
     file_extension = pathlib.Path(args.source).suffix
-    result_extension = pathlib.Path(args.destination).suffix
-    #if (file_extension in supported_formats or file_extension == '.webp') and result_extension == '.gif':
     if args.source in os.listdir():
         try:
             if file_extension != '.webp':
