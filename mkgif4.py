@@ -46,7 +46,6 @@ def check_time(val):
 def check_positive(val):
     ivalue = int(val)
     if ivalue <= 0:
-        #raise argparse.ArgumentTypeError("Speed value must be positive ('%s' is not valid)." % val)
         raise argparse.ArgumentTypeError(Fore.RED+f"speed and size values must be positive ('{val}' is not valid)."+Fore.RESET)
     return ivalue
 
