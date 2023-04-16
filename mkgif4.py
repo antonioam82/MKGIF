@@ -46,20 +46,24 @@ def check_time(val):
 def check_positive(val):
     ivalue = int(val)
     if ivalue <= 0:
-        raise argparse.ArgumentTypeError("Speed value must be positive ('%s' is not valid)." % val)
+        #raise argparse.ArgumentTypeError("Speed value must be positive ('%s' is not valid)." % val)
+        raise argparse.ArgumentTypeError(Fore.RED+f"speed and size values must be positive ('{val}' is not valid)."+Fore.RESET)
     return ivalue
 
 def check_source_ext(file):
     supported_formats = ['.mp4','.avi','.mov','.wmv','.rm','.webp']
     file_extension = pathlib.Path(file).suffix
-    if file_extension not in supported_formats:
-        raise argparse.ArgumentTypeError("Source file must be '.mp4', '.avi', '.mov', '.wmv', '.rm' or '.webp' ('%s' is not valid)." % file_extension)
+    if file in os.listdir():
+        if file_extension not in supported_formats:
+            raise argparse.ArgumentTypeError(Fore.RED+f"Source file must be '.mp4', '.avi', '.mov', '.wmv', '.rm' or '.webp' ('{file_extension}' is not valid)."+Fore.RESET)
+    else:
+        raise argparse.ArgumentTypeError(Fore.RED+f"FILE NOT FOUND: File '{file}' not found."+Fore.RESET)
     return file
 
 def check_result_ext(file):
     file_extension = pathlib.Path(file).suffix
     if file_extension != '.gif':
-        raise argparse.ArgumentTypeError("Result file must be '.gif' ('%s' is not valid)." % file_extension)
+        raise argparse.ArgumentTypeError(Fore.RED+f"Result file must be '.gif' ('{file_extension}' is not valid)."+Fore.RESET)
     return file
 
 def show(f):
@@ -72,7 +76,7 @@ def show(f):
         w = sprite.width
         h = sprite.height
         window = pyglet.window.Window(width=w, height=h)
-        
+
         @window.event
         def on_draw():
             sprite.draw()
@@ -87,52 +91,49 @@ def get_size_format(b, factor=1024, suffix="B"):
 	        return f"{b:.4f}{unit}{suffix}"
 	    b /= factor
 	return f"{b:.4f}Y{suffix}"
- 
+
 def gm(args):
     print(c_index+b_index+pyfiglet.figlet_format('MKGIF',font='graffiti')+Fore.RESET+Style.RESET_ALL)
     file_extension = pathlib.Path(args.source).suffix
-    if args.source in os.listdir():
-        try:
-            if file_extension != '.webp':
-                probe = ffmpeg.probe(args.source)
-                video_streams = [stream for stream in probe["streams"] if stream["codec_type"] == "video"]
-            
-                if args.end:
-                    duration = float(args.end)
-                else:
-                    duration = float(video_streams[0]['duration'])
+    try:
+        if file_extension != '.webp':
+            probe = ffmpeg.probe(args.source)
+            video_streams = [stream for stream in probe["streams"] if stream["codec_type"] == "video"]
 
-                if args.start < duration:
-                    clip = (VideoFileClip(args.source,audio=False)
-                    .subclip((0,args.start),
-                            (0,duration))
-                    .resize(args.size/100)
-                    .speedx(args.speed/100))
-                    print('CREATING GIF...')
-                    clip.write_gif(args.destination,fps=args.fraps)
-                    clip.close()
-                    size = get_size_format(os.stat(args.destination).st_size)
-                    print(f"Created gif '{args.destination}' with size {size}.")
-                    if args.show:
-                        show(args.destination)
-                else:
-                    print("ERROR: Start value must be smaller than end value.")
+            if args.end:
+                duration = float(args.end)
             else:
-                if args.size == 100 and args.start == 0.0 and args.speed == 100 and not args.end:
-                    print("CONVERTING...")
-                    file = Image.open(args.source)
-                    file.save(args.destination,'gif',save_all=True,background=0)
-                    file.close()
-                    size = get_size_format(os.stat(args.destination).st_size)
-                    print(f"Created '{args.destination}' with size {size} from '{args.source}'.")
-                    if args.show:
-                        show(args.destination)
-                else:
-                    print("-st/--start, -e/--end, -sz/--size and -spd/--speed specs not allowed for '.webp' to '.gif' conversion")
-        except Exception as e:
-            print("UNEXPECTED ERROR: "+str(e))
-    else:
-        print(f"FILE NOT FOUND: File '{args.source}' not found.")
+                duration = float(video_streams[0]['duration'])
+
+            if args.start < duration:
+                clip = (VideoFileClip(args.source,audio=False)
+                .subclip((0,args.start),
+                        (0,duration))
+                .resize(args.size/100)
+                .speedx(args.speed/100))
+                print('CREATING GIF...')
+                clip.write_gif(args.destination,fps=args.fraps)
+                clip.close()
+                size = get_size_format(os.stat(args.destination).st_size)
+                print(f"Created gif '{args.destination}' with size {size}.")
+                if args.show:
+                    show(args.destination)
+            else:
+                print("ERROR: Start value must be smaller than end value.")
+        else:
+            if args.size == 100 and args.start == 0.0 and args.speed == 100 and not args.end:
+                print("CONVERTING...")
+                file = Image.open(args.source)
+                file.save(args.destination,'gif',save_all=True,background=0)
+                file.close()
+                size = get_size_format(os.stat(args.destination).st_size)
+                print(f"Created '{args.destination}' with size {size} from '{args.source}'.")
+                if args.show:
+                    show(args.destination)
+            else:
+                print("-st/--start, -e/--end, -sz/--size and -spd/--speed specs not allowed for '.webp' to '.gif' conversion")
+    except Exception as e:
+        print("UNEXPECTED ERROR: "+str(e))
 
 if __name__=='__main__':
     main()
