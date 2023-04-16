@@ -40,8 +40,8 @@ def main():
 def check_time(val):
     time = float(val)
     if time < 0.0:
-        raise argparse.ArgumentTypeError("Time value must be equal or bigger than 0.00 ('%s' is not valid)." % val)
-    return val
+        raise argparse.ArgumentTypeError(Fore.RED+f"time values must be equal or bigger than 0.00 ('{val}' is not valid).")
+    return time
 
 def check_positive(val):
     ivalue = int(val)
