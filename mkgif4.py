@@ -62,7 +62,7 @@ def check_source_ext(file):
 def check_result_ext(file):
     file_extension = pathlib.Path(file).suffix
     if file_extension != '.gif':
-        raise argparse.ArgumentTypeError(Fore.RED+f"Result file must be '.gif' ('{file_extension}' is not valid)."+Fore.RESET)
+        raise argparse.ArgumentTypeError(Fore.RED+f"result file must be '.gif' ('{file_extension}' is not valid)."+Fore.RESET)
     return file
 
 def show(f):
