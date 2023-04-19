@@ -38,8 +38,23 @@ def main():
     args=parser.parse_args()
     file_extension = pathlib.Path(args.source).suffix
 
-    if file_extension == '.webp' and (args.start != 0.0 or args.end is not None or args.speed != 100 or args.size != 100):
-        parser.error(Fore.RED+"-st/--start, -e/--end, -sz/--size and -spd/--speed specs not allowed for '.webp' to '.gif' conversion."+Fore.RESET)
+    #if file_extension == '.webp' and (args.start != 0.0 or args.end is not None or args.speed != 100 or args.size != 100):
+        #parser.error(Fore.RED+"-st/--start, -e/--end, -sz/--size and -spd/--speed specs not allowed for '.webp' to '.gif' conversion."+Fore.RESET)
+
+    if file_extension == '.webp':
+        if args.start != 0.0 or args.end is not None or args.speed != 100 or args.size != 100:
+            parser.error(Fore.RED+"-st/--start, -e/--end, -sz/--size and -spd/--speed specs not allowed for '.webp' to '.gif' conversion."+Fore.RESET)
+    else:
+        probe = ffmpeg.probe(args.source)
+        video_streams = [stream for stream in probe["streams"] if stream["codec_type"] == "video"]
+        
+        if args.end:
+            args.end = float(args.end)
+        else:
+            args.end = float(video_streams[0]['duration'])
+
+        if args.start > args.end:
+            parser.error(Fore.RED+"start value must be smaller than end value."+Fore.RESET)
     
     gm(args)
 
@@ -99,32 +114,20 @@ def get_size_format(b, factor=1024, suffix="B"):
 
 def gm(args):
     print(c_index+b_index+pyfiglet.figlet_format('MKGIF',font='graffiti')+Fore.RESET+Style.RESET_ALL)
-    #file_extension = pathlib.Path(args.source).suffix
     try:
         if file_extension != '.webp':
-            probe = ffmpeg.probe(args.source)
-            video_streams = [stream for stream in probe["streams"] if stream["codec_type"] == "video"]
-
-            if args.end:
-                duration = float(args.end)
-            else:
-                duration = float(video_streams[0]['duration'])
-
-            if args.start < duration:
-                clip = (VideoFileClip(args.source,audio=False)
-                .subclip((0,args.start),
-                        (0,duration))
-                .resize(args.size/100)
-                .speedx(args.speed/100))
-                print('CREATING GIF...')
-                clip.write_gif(args.destination,fps=args.fraps)
-                clip.close()
-                size = get_size_format(os.stat(args.destination).st_size)
-                print(f"Created gif '{args.destination}' with size {size}.")
-                if args.show:
-                    show(args.destination)
-            else:
-                print("ERROR: Start value must be smaller than end value.")
+            clip = (VideoFileClip(args.source,audio=False)
+            .subclip((0,args.start),
+                     (0,args.end))
+            .resize(args.size/100)
+            .speedx(args.speed/100))
+            print('CREATING GIF...')
+            clip.write_gif(args.destination,fps=args.fraps)
+            clip.close()
+            size = get_size_format(os.stat(args.destination).st_size)
+            print(f"Created gif '{args.destination}' with size {size}.")
+            if args.show:
+                show(args.destination)
         else:
             print("CONVERTING...")
             file = Image.open(args.source)
