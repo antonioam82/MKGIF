@@ -22,6 +22,7 @@ c_index = color[random.randint(0,6)]
 b_index = bright[random.randint(0,2)]
 
 def main():
+    global file_extension
     parser = argparse.ArgumentParser(prog="MKGIF 2.1",conflict_handler='resolve',
                                      description="Create gifs from videos in command line or convert '.webp' files into '.gif'.",
                                      epilog = "REPO: https://github.com/antonioam82/MKGIF")
@@ -35,8 +36,9 @@ def main():
     parser.add_argument('-fps','--fraps',default=None,type=int,help='Frames por segundo')
 
     args=parser.parse_args()
+    file_extension = pathlib.Path(args.source).suffix
 
-    if pathlib.Path(args.source).suffix == '.webp' and (args.start != 0.0 or args.end is not None or args.speed != 100 or args.size != 100):
+    if file_extension == '.webp' and (args.start != 0.0 or args.end is not None or args.speed != 100 or args.size != 100):
         parser.error(Fore.RED+"-st/--start, -e/--end, -sz/--size and -spd/--speed specs not allowed for '.webp' to '.gif' conversion."+Fore.RESET)
     
     gm(args)
@@ -97,7 +99,7 @@ def get_size_format(b, factor=1024, suffix="B"):
 
 def gm(args):
     print(c_index+b_index+pyfiglet.figlet_format('MKGIF',font='graffiti')+Fore.RESET+Style.RESET_ALL)
-    file_extension = pathlib.Path(args.source).suffix
+    #file_extension = pathlib.Path(args.source).suffix
     try:
         if file_extension != '.webp':
             probe = ffmpeg.probe(args.source)
