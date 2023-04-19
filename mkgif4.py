@@ -35,6 +35,10 @@ def main():
     parser.add_argument('-fps','--fraps',default=None,type=int,help='Frames por segundo')
 
     args=parser.parse_args()
+
+    if pathlib.Path(args.source).suffix == '.webp' and (args.start != 0.0 or args.end is not None or args.speed != 100 or args.size != 100):
+        parser.error(Fore.RED+"-st/--start, -e/--end, -sz/--size and -spd/--speed specs not allowed for '.webp' to '.gif' conversion."+Fore.RESET)
+    
     gm(args)
 
 def check_time(val):
@@ -120,17 +124,15 @@ def gm(args):
             else:
                 print("ERROR: Start value must be smaller than end value.")
         else:
-            if args.size == 100 and args.start == 0.0 and args.speed == 100 and not args.end:
-                print("CONVERTING...")
-                file = Image.open(args.source)
-                file.save(args.destination,'gif',save_all=True,background=0)
-                file.close()
-                size = get_size_format(os.stat(args.destination).st_size)
-                print(f"Created '{args.destination}' with size {size} from '{args.source}'.")
-                if args.show:
-                    show(args.destination)
-            else:
-                print("-st/--start, -e/--end, -sz/--size and -spd/--speed specs not allowed for '.webp' to '.gif' conversion")
+            print("CONVERTING...")
+            file = Image.open(args.source)
+            file.save(args.destination,'gif',save_all=True,background=0)
+            file.close()
+            size = get_size_format(os.stat(args.destination).st_size)
+            print(f"Created '{args.destination}' with size {size} from '{args.source}'.")
+            if args.show:
+                show(args.destination)
+                
     except Exception as e:
         print("UNEXPECTED ERROR: "+str(e))
 
