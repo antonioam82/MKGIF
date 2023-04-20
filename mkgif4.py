@@ -38,12 +38,9 @@ def main():
     args=parser.parse_args()
     file_extension = pathlib.Path(args.source).suffix
 
-    #if file_extension == '.webp' and (args.start != 0.0 or args.end is not None or args.speed != 100 or args.size != 100):
-        #parser.error(Fore.RED+"-st/--start, -e/--end, -sz/--size and -spd/--speed specs not allowed for '.webp' to '.gif' conversion."+Fore.RESET)
-
     if file_extension == '.webp':
         if args.start != 0.0 or args.end is not None or args.speed != 100 or args.size != 100:
-            parser.error(Fore.RED+"-st/--start, -e/--end, -sz/--size and -spd/--speed specs not allowed for '.webp' to '.gif' conversion."+Fore.RESET)
+            parser.error(Fore.RED+Style.BRIGHT+"-st/--start, -e/--end, -sz/--size and -spd/--speed specs not allowed for '.webp' to '.gif' conversion."+Fore.RESET+Style.RESET_ALL)
     else:
         probe = ffmpeg.probe(args.source)
         video_streams = [stream for stream in probe["streams"] if stream["codec_type"] == "video"]
@@ -54,20 +51,20 @@ def main():
             args.end = float(video_streams[0]['duration'])
 
         if args.start > args.end:
-            parser.error(Fore.RED+"start value must be smaller than end value."+Fore.RESET)
+            parser.error(Fore.RED+Style.BRIGHT+"start value must be smaller than end value."+Fore.RESET+Style.RESET_ALL)
     
     gm(args)
 
 def check_time(val):
     time = float(val)
     if time < 0.0:
-        raise argparse.ArgumentTypeError(Fore.RED+f"time values must be equal or bigger than 0.00 ('{val}' is not valid).")
+        raise argparse.ArgumentTypeError(Fore.RED+Style.BRIGHT+f"time values must be equal or bigger than 0.00 ('{val}' is not valid)."+Fore.RESET+Style.RESET_ALL)
     return time
 
 def check_positive(val):
     ivalue = int(val)
     if ivalue <= 0:
-        raise argparse.ArgumentTypeError(Fore.RED+f"speed and size values must be positive ('{val}' is not valid)."+Fore.RESET)
+        raise argparse.ArgumentTypeError(Fore.RED+Style.BRIGHT+f"speed and size values must be positive ('{val}' is not valid)."+Fore.RESET+Style.RESET_ALL)
     return ivalue
 
 def check_source_ext(file):
@@ -75,15 +72,15 @@ def check_source_ext(file):
     file_extension = pathlib.Path(file).suffix
     if file in os.listdir():
         if file_extension not in supported_formats:
-            raise argparse.ArgumentTypeError(Fore.RED+f"Source file must be '.mp4', '.avi', '.mov', '.wmv', '.rm' or '.webp' ('{file_extension}' is not valid)."+Fore.RESET)
+            raise argparse.ArgumentTypeError(Fore.RED+Style.BRIGHT+f"Source file must be '.mp4', '.avi', '.mov', '.wmv', '.rm' or '.webp' ('{file_extension}' is not valid)."+Fore.RESET+Style.RESET_ALL)
     else:
-        raise argparse.ArgumentTypeError(Fore.RED+f"FILE NOT FOUND: File '{file}' not found."+Fore.RESET)
+        raise argparse.ArgumentTypeError(Fore.RED+Style.BRIGHT+f"FILE NOT FOUND: File '{file}' not found."+Fore.RESET+Style.RESET_ALL)
     return file
 
 def check_result_ext(file):
     file_extension = pathlib.Path(file).suffix
     if file_extension != '.gif':
-        raise argparse.ArgumentTypeError(Fore.RED+f"result file must be '.gif' ('{file_extension}' is not valid)."+Fore.RESET)
+        raise argparse.ArgumentTypeError(Fore.RED+Style.BRIGHT+f"result file must be '.gif' ('{file_extension}' is not valid)."+Fore.RESET+Style.RESET_ALL)
     return file
 
 def show(f):
