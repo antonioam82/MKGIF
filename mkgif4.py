@@ -51,10 +51,11 @@ def main():
             args.end = float(video_streams[0]['duration'])
 
         if args.start > args.end:
-            parser.error(Fore.RED+Style.BRIGHT+"start value must be smaller than end value."+Fore.RESET+Style.RESET_ALL)
+            parser.error(Fore.RED+Style.BRIGHT+"start value must be smaller than end value."+Fore.RESET+Style.RESET_ALL) 
     
     gm(args)
 
+    
 def check_time(val):
     time = float(val)
     if time < 0.0:
@@ -123,8 +124,7 @@ def gm(args):
             clip.close()
             size = get_size_format(os.stat(args.destination).st_size)
             print(f"Created gif '{args.destination}' with size {size}.")
-            if args.show:
-                show(args.destination)
+            
         else:
             print("CONVERTING...")
             file = Image.open(args.source)
@@ -132,8 +132,9 @@ def gm(args):
             file.close()
             size = get_size_format(os.stat(args.destination).st_size)
             print(f"Created '{args.destination}' with size {size} from '{args.source}'.")
-            if args.show:
-                show(args.destination)
+            
+        if args.show:
+            show(args.destination)
                 
     except Exception as e:
         print("UNEXPECTED ERROR: "+str(e))
