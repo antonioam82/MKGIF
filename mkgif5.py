@@ -10,6 +10,7 @@ from pyglet.window import key
 import argparse
 import random
 from colorama import Fore, init, Style
+from pynput import keyboard
 import os
  
 init()
@@ -141,3 +142,4 @@ def gm(args):
  
 if __name__=='__main__':
     main()
+
