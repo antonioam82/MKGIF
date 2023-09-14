@@ -10,7 +10,6 @@ from pyglet.window import key
 import argparse
 import random
 from colorama import Fore, init, Style
-from pynput import keyboard
 import os
  
 init()
@@ -24,7 +23,7 @@ b_index = bright[random.randint(0,2)]
  
 def main():
     global file_extension
-    parser = argparse.ArgumentParser(prog="MKGIF 2.1.1",conflict_handler='resolve',
+    parser = argparse.ArgumentParser(prog="MKGIF 2.1",conflict_handler='resolve',
                                      description="Create gifs from videos in command line or convert '.webp' files into '.gif'.",
                                      epilog = "REPO: https://github.com/antonioam82/MKGIF")
     parser.add_argument('-src','--source',required=True,type=check_source_ext,help='Nombre archivo original')
@@ -142,4 +141,3 @@ def gm(args):
  
 if __name__=='__main__':
     main()
-
