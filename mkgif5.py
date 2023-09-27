@@ -23,18 +23,18 @@ b_index = bright[random.randint(0,2)]
  
 def main():
     global file_extension
-    parser = argparse.ArgumentParser(prog="MKGIF 2.1",conflict_handler='resolve',
+    parser = argparse.ArgumentParser(prog="MKGIF 2.1.1",conflict_handler='resolve',
                                      description="Create gifs from videos in command line or convert '.webp' files into '.gif'.",
                                      epilog = "REPO: https://github.com/antonioam82/MKGIF")
-    parser.add_argument('-src','--source',required=True,type=check_source_ext,help='Name of source file')
-    parser.add_argument('-dest','--destination',default='my_gif.gif',type=check_result_ext,help="Nane of new file ('my_gif.gif' by default')")
-    parser.add_argument('-st','--start',default=0.0,type=check_time,help='Initial second of the gif')
-    parser.add_argument('-e','--end',default=None,type=check_time,help='Final second of the gif')
-    parser.add_argument('-shw','--show',help='Show created gif',action='store_true')
-    parser.add_argument('-sz','--size',default=100,type=check_positive,help='Relative size (100 by default)')
-    parser.add_argument('-spd','--speed',default=100,type=check_positive,help='Relative speed (100 by default)')
-    parser.add_argument('-fps','--fraps',default=None,type=int,help='Frames per second')
-    parser.add_argument('-delsrc','--delete_source',help='Create gif and remove source file',action='store_true')
+    parser.add_argument('-src','--source',required=True,type=check_source_ext,help=Fore.YELLOW + Style.DIM + 'Name of source file.' + Fore.RESET + Style.RESET_ALL)
+    parser.add_argument('-dest','--destination',default='my_gif.gif',type=check_result_ext,help=Fore.YELLOW + Style.DIM + "Nane of new file ('my_gif.gif' by default')." + Fore.RESET + Style.RESET_ALL)
+    parser.add_argument('-st','--start',default=0.0,type=check_time,help=Fore.YELLOW + Style.DIM + 'Initial second of the gif.' + Fore.RESET + Style.RESET_ALL)
+    parser.add_argument('-e','--end',default=None,type=check_time,help=Fore.YELLOW + Style.DIM + 'Final second of the gif.' + Fore.RESET + Style.RESET_ALL)
+    parser.add_argument('-shw','--show',help=Fore.YELLOW + Style.DIM + 'Show created gif.'+ Fore.RESET + Style.RESET_ALL,action='store_true')
+    parser.add_argument('-sz','--size',default=100,type=check_positive,help=Fore.YELLOW + Style.DIM + 'Relative size (100 by default).' + Fore.RESET + Style.RESET_ALL)
+    parser.add_argument('-spd','--speed',default=100,type=check_positive,help=Fore.YELLOW + Style.DIM + 'Relative speed (100 by default).' + Fore.RESET + Style.RESET_ALL)
+    parser.add_argument('-fps','--fraps',default=None,type=int,help=Fore.YELLOW + Style.DIM + 'Frames per second.' + Fore.RESET + Style.RESET_ALL)
+    parser.add_argument('-delsrc','--delete_source',action='store_true',help=Fore.YELLOW + Style.DIM + 'Create gif and remove source file.' + Fore.RESET + Style.RESET_ALL)
  
     args=parser.parse_args()
     file_extension = pathlib.Path(args.source).suffix
