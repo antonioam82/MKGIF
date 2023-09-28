@@ -136,7 +136,7 @@ def gm(args):
 
         if args.delete_source:
             os.remove(args.source)
-            print(f"Removed file '{args.source}.")
+            print(f"Removed file '{args.source}'.")
  
         if args.show:
             show(args.destination)
