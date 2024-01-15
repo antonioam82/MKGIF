@@ -27,7 +27,7 @@ def main():
                                      description="Create gifs from videos in command line or convert '.webp' files into '.gif'.",
                                      epilog = "REPO: https://github.com/antonioam82/MKGIF")
     parser.add_argument('-src','--source',required=True,type=check_source_ext,help='Source file name')
-    parser.add_argument('-dest','--destination',default='my_gif.gif',type=check_result_ext,help='Destination file name')
+    parser.add_argument('-dest','--destination',default='my_gif.gif',type=check_result_ext,help="Destination file name ('my_gif.gif' by default)")
     parser.add_argument('-st','--start',default=0.0,type=check_time,help='Initial second of the gif')
     parser.add_argument('-e','--end',default=None,type=check_time,help='End second of the gif')
     parser.add_argument('-shw','--show',help='Generate gif and display the result',action='store_true')
@@ -56,6 +56,7 @@ def main():
  
     gm(args)
  
+ 
 def check_time(val):
     time = float(val)
     if time < 0.0:
@@ -63,7 +64,7 @@ def check_time(val):
     return time
  
 def check_positive(val):
-    ivalue = int(val)
+    ivalue = float(val)
     if ivalue <= 0:
         raise argparse.ArgumentTypeError(Fore.RED+Style.BRIGHT+f"speed and size values must be positive ('{val}' is not valid)."+Fore.RESET+Style.RESET_ALL)
     return ivalue
@@ -145,3 +146,4 @@ def gm(args):
  
 if __name__=='__main__':
     main()
+
