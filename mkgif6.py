@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from moviepy.editor import VideoFileClip
+from moviepy.editor import VideoFileClip, vfx
 from PIL import Image
 import pyfiglet
 import ffmpeg
@@ -124,7 +124,10 @@ def gm(args):
             .resize(args.size/100)
             .speedx(args.speed/100))
             print('CREATING GIF...')
-            clip.write_gif(args.destination,fps=args.fraps)
+            clip.to_gif(args.destination)
+            #.fx(vfx.speedx, args.speed/100))
+            #clip.write_gif(args.destination,fps=args.fraps)
+            #clip.write_gif(args.destination,progress_bar=True)
             clip.close()
             size = get_size_format(os.stat(args.destination).st_size)
             print(f"Created gif '{args.destination}' with size {size}.")
