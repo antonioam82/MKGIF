@@ -33,7 +33,7 @@ def main():
     parser.add_argument('-shw','--show',help='Generate gif and display the result',action='store_true')
     parser.add_argument('-sz','--size',default=100,type=check_positive,help='Relative size of the gif (100 by default)')
     parser.add_argument('-spd','--speed',default=100,type=check_positive,help='Relative speed of the gif (100 by default)')
-    parser.add_argument('-fps','--fraps',default=None,type=int,help='Frames per second')
+    parser.add_argument('-fps','--fraps',default=None,type=check_positive,help='Frames per second')
     parser.add_argument('-delsrc','--delete_source',action='store_true',help='Generate gif and remove source file')
     
     args=parser.parse_args()
@@ -113,7 +113,7 @@ def get_size_format(b, factor=1024, suffix="B"):
 	        return f"{b:.4f}{unit}{suffix}"
 	    b /= factor
 	return f"{b:.4f}Y{suffix}"
- 
+
 def gm(args):
     print(c_index+b_index+pyfiglet.figlet_format('MKGIF',font='graffiti')+Fore.RESET+Style.RESET_ALL)
     try:
@@ -124,10 +124,7 @@ def gm(args):
             .resize(args.size/100)
             .speedx(args.speed/100))
             print('CREATING GIF...')
-            clip.to_gif(args.destination)
-            #.fx(vfx.speedx, args.speed/100))
-            #clip.write_gif(args.destination,fps=args.fraps)
-            #clip.write_gif(args.destination,progress_bar=True)
+            clip.write_gif(args.destination,fps=args.fraps)
             clip.close()
             size = get_size_format(os.stat(args.destination).st_size)
             print(f"Created gif '{args.destination}' with size {size}.")
@@ -139,7 +136,7 @@ def gm(args):
             file.close()
             size = get_size_format(os.stat(args.destination).st_size)
             print(f"Created '{args.destination}' with size {size} from '{args.source}'.")
-
+ 
         if args.delete_source:
             os.remove(args.source)
             print(f"Removed file '{args.source}'.")
