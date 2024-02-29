@@ -116,7 +116,14 @@ def get_size_format(b, factor=1024, suffix="B"):
 	return f"{b:.4f}Y{suffix}"
 
 def generate_gif(video_input, gif_output, start_time, duration, fps, scale):
-    #probe = ffmpeg.probe(video_input)
+    probe = ffmpeg.probe(video_input)
+    video_streams = [stream for stream in probe["streams"] if stream["codec_type"] == "video"]
+
+    width = video_streams[0]['width']
+    height = video_streams[0]['height']
+    print("WIDTH: ",width)
+    print("HEIGHT: ",height)
+
     
     comand = ['ffmpeg', '-y', '-i', video_input]
     
@@ -127,12 +134,10 @@ def generate_gif(video_input, gif_output, start_time, duration, fps, scale):
     
     opciones_vf = ['fps={}'.format(fps)]
     if scale:
-        opciones_vf.append('scale={}:{}'.format(scale[0], scale[1]))
+        opciones_vf.append('scale={}:{}'.format(width, height))
     
     comand.extend(['-r', str(fps), '-vf', ','.join(opciones_vf)])
-    
     comand.append(gif_output)
-    
     subprocess.call(comand)
     
 
