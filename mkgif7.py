@@ -115,14 +115,17 @@ def get_size_format(b, factor=1024, suffix="B"):
 	    b /= factor
 	return f"{b:.4f}Y{suffix}"
 
-def generate_gif(video_input, gif_output, start_time, duration, fps, scale):
+def generate_gif(video_input, gif_output, start_time, duration, scale):
     probe = ffmpeg.probe(video_input)
     video_streams = [stream for stream in probe["streams"] if stream["codec_type"] == "video"]
 
     width = video_streams[0]['width']
     height = video_streams[0]['height']
+    frame_rate = video_streams[0]['avg_frame_rate']
+    
     print("WIDTH: ",width)
     print("HEIGHT: ",height)
+    print("FRAME RATE: ",frame_rate)
 
     
     comand = ['ffmpeg', '-y', '-i', video_input]
@@ -132,11 +135,11 @@ def generate_gif(video_input, gif_output, start_time, duration, fps, scale):
     if duration:
         comand.extend(['-t', str(duration)])
     
-    opciones_vf = ['fps={}'.format(fps)]
+    opciones_vf = ['fps={}'.format(frame_rate)]
     if scale:
         opciones_vf.append('scale={}:{}'.format(width, height))
     
-    comand.extend(['-r', str(fps), '-vf', ','.join(opciones_vf)])
+    comand.extend(['-r', str(frame_rate), '-vf', ','.join(opciones_vf)])
     comand.append(gif_output)
     subprocess.call(comand)
     
@@ -144,7 +147,7 @@ def generate_gif(video_input, gif_output, start_time, duration, fps, scale):
 def gm(args):
     try:
         if file_extension != '.webp':
-            generate_gif(args.source,args.destination,0,None,10,None)
+            generate_gif(args.source,args.destination,0,None,None)
             print(c_index+b_index+pyfiglet.figlet_format('MKGIF',font='graffiti')+Fore.RESET+Style.RESET_ALL)
             size = get_size_format(os.stat(args.destination).st_size)
             print(f"Created gif '{args.destination}' with size {size}.")
