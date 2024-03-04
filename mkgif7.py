@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from moviepy.editor import VideoFileClip, vfx
-from PIL import Image
+#from PIL import Image
 import pyfiglet
 import ffmpeg
 import pyglet
@@ -24,7 +24,7 @@ b_index = bright[random.randint(0,2)]
  
 def main():
     global file_extension
-    parser = argparse.ArgumentParser(prog="MKGIF 2.2",conflict_handler='resolve',
+    parser = argparse.ArgumentParser(prog="MKGIF 3.0",conflict_handler='resolve',
                                      description="Create gifs from videos in command line or convert '.webp' files into '.gif'.",
                                      epilog = "REPO: https://github.com/antonioam82/MKGIF")
     parser.add_argument('-src','--source',required=True,type=check_source_ext,help='Source file name')
@@ -86,16 +86,16 @@ def check_result_ext(file):
         raise argparse.ArgumentTypeError(Fore.RED+Style.BRIGHT+f"result file must be '.gif' ('{file_extension}' is not valid)."+Fore.RESET+Style.RESET_ALL)
     return file
  
-def show(f):
+def show(f,w,h):
     print("GENERATING VIEW...")
     try:
-        with Image.open(f) as img:
-            w, h = img.size
+        '''with Image.open(f) as img: ########### 
+            w, h = img.size'''
 
         animation = pyglet.image.load_animation(f)
         binm = pyglet.image.atlas.TextureBin()
         animation.add_to_texture_bin(binm)
-        window = pyglet.window.Window(w,h,'GIF VIEW')
+        window = pyglet.window.Window(int(w),int(h),'GIF VIEW')
         sprite = pyglet.sprite.Sprite(animation)
 
         @window.event
@@ -115,19 +115,8 @@ def get_size_format(b, factor=1024, suffix="B"):
 	    b /= factor
 	return f"{b:.4f}Y{suffix}"
 
-def generate_gif(video_input, gif_output, start_time, duration, scale):
-    probe = ffmpeg.probe(video_input)
-    video_streams = [stream for stream in probe["streams"] if stream["codec_type"] == "video"]
+def generate_gif(video_input, gif_output, start_time, duration, width, height, frame_rate):################################
 
-    width = video_streams[0]['width'] * scale / 100
-    height = video_streams[0]['height'] * scale / 100
-    frame_rate = video_streams[0]['avg_frame_rate']
-    
-    print("WIDTH: ",width)
-    print("HEIGHT: ",height)
-    print("FRAME RATE: ",frame_rate)
-
-    
     comand = ['ffmpeg', '-y', '-i', video_input]
     
     if start_time:
@@ -147,7 +136,21 @@ def generate_gif(video_input, gif_output, start_time, duration, scale):
 def gm(args):
     try:
         if file_extension != '.webp':
-            generate_gif(args.source,args.destination,0,12,args.size)##########
+
+            ###########################################################
+            probe = ffmpeg.probe(args.source)
+            video_streams = [stream for stream in probe["streams"] if stream["codec_type"] == "video"]
+
+            width = video_streams[0]['width'] * args.size / 100
+            height = video_streams[0]['height'] * args.size / 100
+            frame_rate = video_streams[0]['avg_frame_rate']
+    
+            print("WIDTH: ",width)
+            print("HEIGHT: ",height)
+            print("FRAME RATE: ",frame_rate)
+            #############################################################
+            
+            generate_gif(args.source,args.destination,0,12,width,height,frame_rate)##########
             print(c_index+b_index+pyfiglet.figlet_format('MKGIF',font='graffiti')+Fore.RESET+Style.RESET_ALL)
             size = get_size_format(os.stat(args.destination).st_size)
             print(f"Created gif '{args.destination}' with size {size}.")
@@ -165,7 +168,7 @@ def gm(args):
             print(f"Removed file '{args.source}'.")
  
         if args.show:
-            show(args.destination)
+            show(args.destination,width,height)
  
     except Exception as e:
         print("UNEXPECTED ERROR: "+str(e))
