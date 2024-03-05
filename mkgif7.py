@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
-#from moviepy.editor import VideoFileClip, vfx
 import pyfiglet
 import ffmpeg
 import pyglet
@@ -122,7 +120,6 @@ def generate_gif(video_input, gif_output, start_time, duration, width, height, f
         comand.extend(['-t', str(duration)])
     
     opciones_vf = ['fps={}'.format(frame_rate)]
-    #if scale:
     opciones_vf.append('scale={}:{}'.format(width, height))
     
     comand.extend(['-r', str(frame_rate), '-vf', ','.join(opciones_vf)])
