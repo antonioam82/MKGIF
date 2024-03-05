@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from moviepy.editor import VideoFileClip, vfx
-#from PIL import Image
+
+#from moviepy.editor import VideoFileClip, vfx
 import pyfiglet
 import ffmpeg
 import pyglet
@@ -33,7 +33,7 @@ def main():
     parser.add_argument('-e','--end',default=None,type=check_time,help='End second of the gif')
     parser.add_argument('-shw','--show',help='Generate gif and display the result',action='store_true')
     parser.add_argument('-sz','--size',default=100,type=check_positive,help='Relative size of the gif (100 by default)')
-    parser.add_argument('-spd','--speed',default=100,type=check_positive,help='Relative speed of the gif (100 by default)')
+    #parser.add_argument('-spd','--speed',default=100,type=check_positive,help='Relative speed of the gif (100 by default)')
     parser.add_argument('-fps','--fraps',default=None,type=check_positive,help='Frames per second')
     parser.add_argument('-delsrc','--delete_source',action='store_true',help='Generate gif and remove source file')
     
@@ -89,9 +89,6 @@ def check_result_ext(file):
 def show(f,w,h):
     print("GENERATING VIEW...")
     try:
-        '''with Image.open(f) as img: ########### 
-            w, h = img.size'''
-
         animation = pyglet.image.load_animation(f)
         binm = pyglet.image.atlas.TextureBin()
         animation.add_to_texture_bin(binm)
@@ -143,7 +140,11 @@ def gm(args):
 
             width = video_streams[0]['width'] * args.size / 100
             height = video_streams[0]['height'] * args.size / 100
-            frame_rate = video_streams[0]['avg_frame_rate']
+
+            if args.fraps:
+                frame_rate = args.fraps
+            else:
+                frame_rate = video_streams[0]['avg_frame_rate']
     
             print("WIDTH: ",width)
             print("HEIGHT: ",height)
