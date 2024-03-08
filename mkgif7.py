@@ -148,7 +148,7 @@ def gm(args):
             print("FRAME RATE: ",frame_rate)
             #############################################################
             
-            generate_gif(args.source,args.destination,0,12,width,height,frame_rate)##########
+            generate_gif(args.source,args.destination,args.start,12,width,height,frame_rate)##########
             print(c_index+b_index+pyfiglet.figlet_format('MKGIF',font='graffiti')+Fore.RESET+Style.RESET_ALL)
             size = get_size_format(os.stat(args.destination).st_size)
             print(f"Created gif '{args.destination}' with size {size}.")
