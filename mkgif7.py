@@ -79,10 +79,19 @@ def check_source_ext(file):
     return file
  
 def check_result_ext(file):
-    file_extension = pathlib.Path(file).suffix
-    if file_extension != '.gif':
-        raise argparse.ArgumentTypeError(Fore.RED+Style.BRIGHT+f"result file must be '.gif' ('{file_extension}' is not valid)."+Fore.RESET+Style.RESET_ALL)
-    return file
+    #file_extension = pathlib.Path(file).suffix
+    name, ex = os.path.splitext(file)
+    c = 0
+    if ex != '.gif':
+        raise argparse.ArgumentTypeError(Fore.RED+Style.BRIGHT+f"result file must be '.gif' ('{ex}' is not valid)."+Fore.RESET+Style.RESET_ALL)
+    ###########################
+    else:
+        for i in os.listdir():
+            if i == file:
+                c+=1
+                
+        return name + str(c) + ex
+    ###########################
  
 def show(f,w,h):
     print("GENERATING VIEW...")
