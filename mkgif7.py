@@ -151,10 +151,7 @@ def gm(args):
                 frame_rate = args.fraps
             else:
                 frame_rate = video_streams[0]['avg_frame_rate']
-    
-            print("WIDTH: ",width)
-            print("HEIGHT: ",height)
-            print("FRAME RATE: ",frame_rate)
+            print(Fore.YELLOW + ("HEIGHT: {} | WIDTH: {} | FRAME RATE: {}"  + Fore.RESET).format(width, height, frame_rate))
             #############################################################
             
             generate_gif(args.source,args.destination,args.start,12,width,height,frame_rate)##########
