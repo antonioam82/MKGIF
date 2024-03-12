@@ -34,6 +34,7 @@ def main():
     #parser.add_argument('-spd','--speed',default=100,type=check_positive,help='Relative speed of the gif (100 by default)')
     parser.add_argument('-fps','--fraps',default=None,type=check_positive,help='Frames per second')
     parser.add_argument('-delsrc','--delete_source',action='store_true',help='Generate gif and remove source file')########
+    parser.add_argument('-dur','--duration',default=None,type=float,help='Result file duration')
     
     args=parser.parse_args()
     file_extension = pathlib.Path(args.source).suffix ##############################################
@@ -149,7 +150,10 @@ def gm(args):
 
             width = video_streams[0]['width'] * args.size / 100
             height = video_streams[0]['height'] * args.size / 100
-            duration = video_streams[0]['duration'] 
+            if args.duration:
+                duration = args.duration
+            else:
+                duration = video_streams[0]['duration'] 
 
             if args.fraps:
                 frame_rate = args.fraps
