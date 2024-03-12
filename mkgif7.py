@@ -36,7 +36,7 @@ def main():
     parser.add_argument('-delsrc','--delete_source',action='store_true',help='Generate gif and remove source file')
     
     args=parser.parse_args()
-    file_extension = pathlib.Path(args.source).suffix
+    file_extension = pathlib.Path(args.source).suffix ##############################################
  
     if file_extension == '.webp':
         if args.start != 0.0 or args.end is not None or args.speed != 100 or args.size != 100:
@@ -88,9 +88,12 @@ def check_result_ext(file):
     else:
         for i in os.listdir():
             if i == file:
+                print("added")
                 c+=1
-                
-        return name + str(c) + ex
+        if c > 0:
+            return name + str(c) + ex
+        else:
+            return name + ex
     ###########################
  
 def show(f,w,h):
