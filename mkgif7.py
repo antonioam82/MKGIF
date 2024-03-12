@@ -33,7 +33,7 @@ def main():
     parser.add_argument('-sz','--size',default=100,type=check_positive,help='Relative size of the gif (100 by default)')
     #parser.add_argument('-spd','--speed',default=100,type=check_positive,help='Relative speed of the gif (100 by default)')
     parser.add_argument('-fps','--fraps',default=None,type=check_positive,help='Frames per second')
-    parser.add_argument('-delsrc','--delete_source',action='store_true',help='Generate gif and remove source file')
+    parser.add_argument('-delsrc','--delete_source',action='store_true',help='Generate gif and remove source file')########
     
     args=parser.parse_args()
     file_extension = pathlib.Path(args.source).suffix ##############################################
@@ -149,15 +149,16 @@ def gm(args):
 
             width = video_streams[0]['width'] * args.size / 100
             height = video_streams[0]['height'] * args.size / 100
+            duration = video_streams[0]['duration'] 
 
             if args.fraps:
                 frame_rate = args.fraps
             else:
                 frame_rate = video_streams[0]['avg_frame_rate']
-            print(Fore.YELLOW + ("WIDTH: {} | HEIGHT: {} | FRAME RATE: {}"  + Fore.RESET).format(width, height, frame_rate))
+            print(Fore.YELLOW + ("WIDTH: {} | HEIGHT: {} | FRAME RATE: {} | DURATION: {}"  + Fore.RESET).format(width, height, frame_rate, duration))
             #############################################################
             
-            generate_gif(args.source,args.destination,args.start,12,width,height,frame_rate)##########
+            generate_gif(args.source,args.destination,args.start,duration,width,height,frame_rate)##########
             print(c_index+b_index+pyfiglet.figlet_format('MKGIF',font='graffiti')+Fore.RESET+Style.RESET_ALL)
             size = get_size_format(os.stat(args.destination).st_size)
             print(f"Created gif '{args.destination}' with size {size}.")
@@ -182,4 +183,3 @@ def gm(args):
  
 if __name__=='__main__':
     main()
-
