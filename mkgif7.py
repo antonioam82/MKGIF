@@ -3,7 +3,7 @@
 import pyfiglet
 import ffmpeg
 import pyglet
-import pathlib
+#import pathlib
 from pyglet.window import key
 import argparse
 import random
@@ -65,7 +65,8 @@ def check_positive(val):
  
 def check_source_ext(file):
     supported_formats = ['.mp4','.avi','.mov','.wmv','.rm','.webp']
-    file_extension = pathlib.Path(file).suffix
+    #file_extension = pathlib.Path(file).suffix#
+    name, file_extension = os.path.splitext(file)
     if file in os.listdir():
         if file_extension not in supported_formats:
             raise argparse.ArgumentTypeError(Fore.RED+Style.BRIGHT+f"Source file must be '.mp4', '.avi', '.mov', '.wmv', '.rm' or '.webp' ('{file_extension}' is not valid)."+Fore.RESET+Style.RESET_ALL)
