@@ -28,7 +28,7 @@ def main():
     parser.add_argument('-src','--source',required=True,type=check_source_ext,help='Source file name')
     parser.add_argument('-dest','--destination',default='my_gif.gif',type=check_result_ext,help="Destination file name ('my_gif.gif' by default)")
     parser.add_argument('-st','--start',default=0.0,type=check_time,help='Initial second of the gif')
-    parser.add_argument('-e','--end',default=None,type=check_time,help='End second of the gif')
+    #parser.add_argument('-e','--end',default=None,type=check_time,help='End second of the gif')
     parser.add_argument('-shw','--show',help='Generate gif and display the result',action='store_true')
     parser.add_argument('-sz','--size',default=100,type=check_positive,help='Relative size of the gif (100 by default)')
     #parser.add_argument('-spd','--speed',default=100,type=check_positive,help='Relative speed of the gif (100 by default)')
@@ -37,22 +37,18 @@ def main():
     parser.add_argument('-dur','--duration',default=None,type=float,help='Result file duration')
     
     args=parser.parse_args()
-    file_extension = pathlib.Path(args.source).suffix ##############################################
+    #file_extension = pathlib.Path(args.source).suffix ##############################################
+    name, file_extension = os.path.splitext(args.source)
  
     if file_extension == '.webp':
-        if args.start != 0.0 or args.end is not None or args.speed != 100 or args.size != 100:
-            parser.error(Fore.RED+Style.BRIGHT+"-st/--start, -e/--end, -sz/--size and -spd/--speed specs not allowed for '.webp' to '.gif' conversion."+Fore.RESET+Style.RESET_ALL)
+        if args.start != 0.0 or args.duration is not None or args.size != 100:
+            parser.error(Fore.RED+Style.BRIGHT+"-st/--start, -sz/--size and -dur/--duration specs not allowed for '.webp' to '.gif' conversion."+Fore.RESET+Style.RESET_ALL)
     else:
         probe = ffmpeg.probe(args.source)
         video_streams = [stream for stream in probe["streams"] if stream["codec_type"] == "video"]
  
-        if args.end:
-            args.end = float(args.end)
-        else:
-            args.end = float(video_streams[0]['duration'])
- 
-        if args.start > args.end:
-            parser.error(Fore.RED+Style.BRIGHT+"start value must be smaller than end value."+Fore.RESET+Style.RESET_ALL)
+        #if args.start > args.duration:
+            #parser.error(Fore.RED+Style.BRIGHT+"start value must be smaller than end value."+Fore.RESET+Style.RESET_ALL)
  
     gm(args)
  
@@ -89,7 +85,6 @@ def check_result_ext(file):
     else:
         for i in os.listdir():
             if i == file:
-                print("added")
                 c+=1
         if c > 0:
             return name + str(c) + ex
