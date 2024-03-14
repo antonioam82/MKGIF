@@ -28,10 +28,8 @@ def main():
     parser.add_argument('-src','--source',required=True,type=check_source_ext,help='Source file name')
     parser.add_argument('-dest','--destination',default='my_gif.gif',type=check_result_ext,help="Destination file name ('my_gif.gif' by default)")
     parser.add_argument('-st','--start',default=0.0,type=check_time,help='Initial second of the gif')
-    #parser.add_argument('-e','--end',default=None,type=check_time,help='End second of the gif')
     parser.add_argument('-shw','--show',help='Generate gif and display the result',action='store_true')
     parser.add_argument('-sz','--size',default=100,type=check_positive,help='Relative size of the gif (100 by default)')
-    #parser.add_argument('-spd','--speed',default=100,type=check_positive,help='Relative speed of the gif (100 by default)')
     parser.add_argument('-fps','--fraps',default=None,type=check_positive,help='Frames per second')
     parser.add_argument('-delsrc','--delete_source',action='store_true',help='Generate gif and remove source file')########
     parser.add_argument('-dur','--duration',default=None,type=float,help='Result file duration')
