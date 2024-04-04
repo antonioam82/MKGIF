@@ -165,7 +165,9 @@ def gm(args):
         else:
             print("CONVERTING...")
             file = Image.open(args.source)
+            width, height = file.size
             file.save(args.destination,'gif',save_all=True,background=0)
+            
             file.close()
             size = get_size_format(os.stat(args.destination).st_size)
             print(f"Created '{args.destination}' with size {size} from '{args.source}'.")
