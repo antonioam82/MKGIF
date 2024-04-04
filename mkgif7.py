@@ -170,6 +170,7 @@ def gm(args):
             
             file.close()
             size = get_size_format(os.stat(args.destination).st_size)
+            print(c_index+b_index+pyfiglet.figlet_format('MKGIF',font='graffiti')+Fore.RESET+Style.RESET_ALL)
             print(f"Created '{args.destination}' with size {size} from '{args.source}'.")
  
         if args.delete_source:
