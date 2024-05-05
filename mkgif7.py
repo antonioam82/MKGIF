@@ -3,7 +3,6 @@
 import pyfiglet
 import ffmpeg
 import pyglet
-#import pathlib
 from pyglet.window import key
 import argparse
 from PIL import Image
@@ -31,12 +30,11 @@ def main():
     parser.add_argument('-st','--start',default=0.0,type=check_time,help='Initial second of the gif')
     parser.add_argument('-shw','--show',help='Generate gif and display the result',action='store_true')
     parser.add_argument('-sz','--size',default=100,type=check_positive,help='Relative size of the gif (100 by default)')
-    parser.add_argument('-fps','--fraps',default=None,type=check_positive,help='Frames per second')
+    #parser.add_argument('-fps','--fraps',default=None,type=check_positive,help='Frames per second')
     parser.add_argument('-delsrc','--delete_source',action='store_true',help='Generate gif and remove source file')########
     parser.add_argument('-dur','--duration',default=None,type=float,help='Result file duration')
     
     args=parser.parse_args()
-    #file_extension = pathlib.Path(args.source).suffix ##############################################
     name, file_extension = os.path.splitext(args.source)
  
     if file_extension == '.webp':
@@ -118,7 +116,7 @@ def get_size_format(b, factor=1024, suffix="B"):
 	    b /= factor
 	return f"{b:.4f}Y{suffix}"
 
-def generate_gif(video_input, gif_output, start_time, duration, width, height, frame_rate):################################
+def generate_gif(video_input, gif_output, start_time, duration, width, height, frame_rate):
 
     comand = ['ffmpeg', '-y', '-i', video_input]
     
@@ -150,10 +148,11 @@ def gm(args):
             else:
                 duration = video_streams[0]['duration'] 
 
-            if args.fraps:
+            '''if args.fraps:
                 frame_rate = args.fraps
-            else:
-                frame_rate = video_streams[0]['avg_frame_rate']
+            else:'''
+            
+            frame_rate = video_streams[0]['avg_frame_rate']
             print(Fore.YELLOW + ("WIDTH: {} | HEIGHT: {} | FRAME RATE: {} | DURATION: {}"  + Fore.RESET).format(width, height, frame_rate, duration))
             #############################################################
             
