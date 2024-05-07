@@ -9,7 +9,7 @@ import random
 from colorama import Fore, init, Style
 import os
 from tqdm import tqdm
-
+import hashlib
 
 init()
 color = {0:Fore.RED,1:Fore.GREEN,2:Fore.YELLOW,
