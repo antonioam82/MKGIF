@@ -60,6 +60,12 @@ def main():
     parser.add_argument('-spd','--speed',default=100,type=check_positive,help='Relative speed of the gif (100 by default)')
 
     args = parser.parse_args()
+    name, file_extension = os.path.splitext(args.source)
+    
+    if file_extension == '.webp':
+        if args.size != 100:
+            parser.error(Fore.RED+Style.BRIGHT+"-sz/--size spec is not allowed for '.webp' to '.gif' conversion."+Fore.RESET+Style.RESET_ALL)
+            
     make_gif(args)
     print("OK")
 
