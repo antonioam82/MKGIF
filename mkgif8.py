@@ -38,6 +38,10 @@ def check_source_ext(file):
         raise argparse.ArgumentTypeError(Fore.RED+Style.BRIGHT+f"FILE NOT FOUND: File '{file}' not found."+Fore.RESET+Style.RESET_ALL)
     return file
 
+def make_gif(args):
+    print(c_index+b_index+pyfiglet.figlet_format('MKGIF',font='graffiti')+Fore.RESET+Style.RESET_ALL)
+    
+
 def check_positive(v):
     ivalue = float(v)
     if ivalue <= 0:
@@ -56,6 +60,7 @@ def main():
     parser.add_argument('-spd','--speed',default=100,type=check_positive,help='Relative speed of the gif (100 by default)')
 
     args = parser.parse_args()
+    make_gif(args)
     print("OK")
 
 if __name__=='__main__':
