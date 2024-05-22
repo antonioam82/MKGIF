@@ -73,15 +73,15 @@ def main():
         if args.size != 100:
             parser.error(Fore.RED+Style.BRIGHT+"-sz/--size spec is not allowed for '.webp' to '.gif' conversion."+Fore.RESET+Style.RESET_ALL)
         else:
+            print(c_index+b_index+pyfiglet.figlet_format('MKGIF',font='graffiti')+Fore.RESET+Style.RESET_ALL)
             file = Image.open(args.source)
             file.save(args.destination,'gif',save_all=True,background=0)
             file.close()
             size = get_size_format(os.stat(args.destination).st_size)
             print(f"Created '{args.destination}' with size {size} from '{args.source}'.")
-            
-            
-    make_gif(args)
-    print("OK")
+    else:
+        make_gif(args)
+        print("OK")
 
 if __name__=='__main__':
     main()
