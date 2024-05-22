@@ -47,6 +47,13 @@ def check_positive(v):
     if ivalue <= 0:
         raise argparse.ArgumentTypeError(Fore.RED+Style.BRIGHT+f"speed and size values must be positive ('{v}' is not valid)."+Fore.RESET+Style.RESET_ALL)
     return ivalue
+
+def get_size_format(b, factor=1024, suffix="B"):
+	for unit in ["","K","M","G","T","P","E","Z"]:
+	    if b < factor:
+	        return f"{b:.4f}{unit}{suffix}"
+	    b /= factor
+	return f"{b:.4f}Y{suffix}"
     
 def main():
     parser = argparse.ArgumentParser(prog="MKGIG 3.1",conflict_handler='resolve',
@@ -65,6 +72,13 @@ def main():
     if file_extension == '.webp':
         if args.size != 100:
             parser.error(Fore.RED+Style.BRIGHT+"-sz/--size spec is not allowed for '.webp' to '.gif' conversion."+Fore.RESET+Style.RESET_ALL)
+        else:
+            file = Image.open(args.source)
+            file.save(args.destination,'gif',save_all=True,background=0)
+            file.close()
+            size = get_size_format(os.stat(args.destination).st_size)
+            print(f"Created '{args.destination}' with size {size} from '{args.source}'.")
+            
             
     make_gif(args)
     print("OK")
