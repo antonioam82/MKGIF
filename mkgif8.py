@@ -79,6 +79,9 @@ def main():
             file.close()
             size = get_size_format(os.stat(args.destination).st_size)
             print(f"Created '{args.destination}' with size {size} from '{args.source}'.")
+            if args.delete_source:
+                os.remove(args.source)
+                print(f"Removed file '{args.source}'.")
     else:
         make_gif(args)
         print("OK")
