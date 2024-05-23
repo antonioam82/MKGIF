@@ -49,8 +49,28 @@ def convert_to_gif(args):
     file.close()
     size = get_size_format(os.stat(args.destination).st_size)
     print(f"Created '{args.destination}' with size {size} from '{args.source}'.")
-    
 
+def show(f):
+    print("GENERATING VIEW...")
+    try:
+        with Image.open(f) as img:
+            w, h = img.size
+
+        animation = pyglet.image.load_animation(f)
+        binm = pyglet.image.atlas.TextureBin()
+        animation.add_to_texture_bin(binm)
+        window = pyglet.window.Window(w,h,'GIF VIEW')
+        sprite = pyglet.sprite.Sprite(animation)
+
+        @window.event
+        def on_draw():
+            sprite.draw()
+
+        pyglet.app.run()
+        print(f"Successfully generated view from '{f}'.")
+    except Exception as e:
+        print("UNEXPECTED ERROR: ",str(e))
+    
 def check_positive(v):
     ivalue = float(v)
     if ivalue <= 0:
@@ -74,6 +94,7 @@ def main():
     parser.add_argument('-sz','--size',default=100,type=check_positive,help='Relative size of the gif (100 by default)')
     parser.add_argument('-delsrc','--delete_source',action='store_true',help='Generate gif and remove source file')
     parser.add_argument('-spd','--speed',default=100,type=check_positive,help='Relative speed of the gif (100 by default)')
+    parser.add_argument('-shw','--show',action='store_true',help='Show result file')
 
     args = parser.parse_args()
     name, file_extension = os.path.splitext(args.source)
@@ -90,6 +111,9 @@ def main():
     if args.delete_source:
         os.remove(args.source)
         print(f"Removed file '{args.source}'.")
+
+    if args.show:
+        show(args.destination)
     
 
 if __name__=='__main__':
