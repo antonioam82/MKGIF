@@ -40,8 +40,24 @@ def check_source_ext(file):
 
 def make_gif(args):
     print(c_index+b_index+pyfiglet.figlet_format('MKGIF',font='graffiti')+Fore.RESET+Style.RESET_ALL)
-    
 
+'''def calculate_hash(filepath):
+    sha256 = hashlib.sha256()
+    with open(str(filepath), "rb") as file:
+        while True:
+            block = file.read(65536)
+            if not block:
+                break
+            sha256.update(block)
+    return sha256.hexdigest()'''
+
+def calculate_sha1(file_path):
+    sha1_hash = hashlib.sha1()
+    with open(file_path, "rb") as f:
+        for byte_block in iter(lambda: f.read(4096), b""):
+            sha1_hash.update(byte_block)
+    return sha1_hash.hexdigest()
+    
 def convert_to_gif(args):
     print(c_index+b_index+pyfiglet.figlet_format('MKGIF',font='graffiti')+Fore.RESET+Style.RESET_ALL)
     file = Image.open(args.source)
@@ -90,7 +106,7 @@ def main():
                                      epilog = "REPO: https://github.com/antonioam82/MKGIF")
     
     parser.add_argument('-src','--source',required=True,type=check_source_ext,help='Source file name')
-    parser.add_argument('-dest','--destination',type=check_result_ext,help="Destination file name")
+    parser.add_argument('-dest','--destination',type=check_result_ext,default=None,help="Destination file name")
     parser.add_argument('-sz','--size',default=100,type=check_positive,help='Relative size of the gif (100 by default)')
     parser.add_argument('-delsrc','--delete_source',action='store_true',help='Generate gif and remove source file')
     parser.add_argument('-spd','--speed',default=100,type=check_positive,help='Relative speed of the gif (100 by default)')
@@ -98,6 +114,10 @@ def main():
 
     args = parser.parse_args()
     name, file_extension = os.path.splitext(args.source)
+
+    if args.destination is None:
+            hash_name = calculate_sha1(args.source)
+            args.destination = f"{hash_name}.gif"    
     
     if file_extension == '.webp':
         if args.size != 100:
