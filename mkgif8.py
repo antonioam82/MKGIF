@@ -40,7 +40,13 @@ def check_source_ext(file):
 
 def make_gif(args):
     print(c_index+b_index+pyfiglet.figlet_format('MKGIF',font='graffiti')+Fore.RESET+Style.RESET_ALL)
-
+    probe = ffmpeg.probe(args.source)
+    video_streams = [stream for stream in probe["streams"] if stream["codec_type"] == "video"]
+    #width = video_streams[0]['width'] * args.size / 100
+    #height = video_streams[0]['height'] * args.size / 100
+    num_frames = video_streams[0]['nb_frames']
+    print("FRAMES: ",num_frames)
+    
 '''def calculate_hash(filepath):
     sha256 = hashlib.sha256()
     with open(str(filepath), "rb") as file:
@@ -137,3 +143,4 @@ def main():
     
 if __name__=='__main__':
     main()
+
