@@ -7,9 +7,10 @@ from pyglet.window import key
 import argparse
 from PIL import Image
 import random
-#import subprocess
 from colorama import Fore, init, Style
+import threading
 import os
+import cv2
 from tqdm import tqdm
 import hashlib
 
@@ -46,6 +47,21 @@ def make_gif(args):
     #height = video_streams[0]['height'] * args.size / 100
     num_frames = video_streams[0]['nb_frames']
     print("FRAMES: ",num_frames)
+    frame_list = []
+
+    cap = cv2.VideoCapture(args.source)
+    '''while True:
+        ret, frame = cap.read()
+        if not ret:
+            break
+        frame_list.append(frame)
+        
+    cap.release()
+    print('Frames: ',len(frame_list))'''
+
+def init_task():
+    t1 = threading.Thread(target=make_gif)
+    t1.start()
     
 '''def calculate_hash(filepath):
     sha256 = hashlib.sha256()
