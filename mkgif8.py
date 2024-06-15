@@ -47,17 +47,20 @@ def make_gif(args):
     #width = video_streams[0]['width'] * args.size / 100
     #height = video_streams[0]['height'] * args.size / 100
     num_frames = video_streams[0]['nb_frames']
-    print("FRAMES: ",num_frames)
+    print("PROCESSING...")
     frame_list = []
 
     cap = cv2.VideoCapture(args.source)
+    pbar = tqdm(total=int(num_frames), unit='frames')
     ret = True
     while ret:
         ret, frame = cap.read()
         if ret:
             frame_list.append(frame)
+            pbar.update(ret)
         
     cap.release()
+    pbar.close()
     print('Frames: ',len(frame_list))
 
 def calculate_sha1(file_path):
