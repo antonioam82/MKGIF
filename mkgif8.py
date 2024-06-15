@@ -51,14 +51,14 @@ def make_gif(args):
     frame_list = []
 
     cap = cv2.VideoCapture(args.source)
-    '''while True:
+    ret = True
+    while ret:
         ret, frame = cap.read()
-        if not ret:
-            break
-        frame_list.append(frame)
+        if ret:
+            frame_list.append(frame)
         
     cap.release()
-    print('Frames: ',len(frame_list))'''
+    print('Frames: ',len(frame_list))
 
 def init_task():
     t1 = threading.Thread(target=make_gif)
