@@ -9,7 +9,7 @@ from PIL import Image
 import random
 #import subprocess
 from colorama import Fore, init, Style
-import threading
+#import threading
 import os
 import cv2
 from tqdm import tqdm
@@ -59,20 +59,6 @@ def make_gif(args):
         
     cap.release()
     print('Frames: ',len(frame_list))
-
-def init_task():
-    t1 = threading.Thread(target=make_gif)
-    t1.start()
-    
-'''def calculate_hash(filepath):
-    sha256 = hashlib.sha256()
-    with open(str(filepath), "rb") as file:
-        while True:
-            block = file.read(65536)
-            if not block:
-                break
-            sha256.update(block)
-    return sha256.hexdigest()'''
 
 def calculate_sha1(file_path):
     sha1_hash = hashlib.sha1()
