@@ -3,17 +3,17 @@
 import pyfiglet
 import ffmpeg
 import pyglet
-from pyglet.window import key
+#from pyglet.window import key
+#from pyglet.window import key as pyglet_key
 import argparse
 from PIL import Image
 import random
-#import subprocess
 from colorama import Fore, init, Style
-#import threading
 import os
 import cv2
 from tqdm import tqdm
 import hashlib
+from pynput import keyboard
 
 init()
 color = {0:Fore.RED,1:Fore.GREEN,2:Fore.YELLOW,
@@ -23,6 +23,7 @@ bright = {0:Style.DIM,1:Style.NORMAL,2:Style.BRIGHT}
  
 c_index = color[random.randint(0,6)]
 b_index = bright[random.randint(0,2)]
+stop = False
 
 def check_result_ext(file):
     name, ex = os.path.splitext(file)
@@ -41,27 +42,41 @@ def check_source_ext(file):
     return file
 
 def make_gif(args):
+    listener = keyboard.Listener(on_press=on_press)
+    listener.start()
     print(c_index+b_index+pyfiglet.figlet_format('MKGIF',font='graffiti')+Fore.RESET+Style.RESET_ALL)
     probe = ffmpeg.probe(args.source)
     video_streams = [stream for stream in probe["streams"] if stream["codec_type"] == "video"]
-    #width = video_streams[0]['width'] * args.size / 100
-    #height = video_streams[0]['height'] * args.size / 100
     num_frames = video_streams[0]['nb_frames']
+
     print("PROCESSING...")
     frame_list = []
 
     cap = cv2.VideoCapture(args.source)
     pbar = tqdm(total=int(num_frames), unit='frames', ncols=100)
     ret = True
+
     while ret:
         ret, frame = cap.read()
         if ret:
             frame_list.append(frame)
-            pbar.update(ret)
+            pbar.update(1)
+
+        if stop:
+            print(Fore.YELLOW + Style.DIM + "\nFrame processing interrupted by user." + Fore.RESET + Style.RESET_ALL)
+            break
         
     cap.release()
     pbar.close()
-    print('Frames: ',len(frame_list))
+    listener.stop()
+    print('Frames: ', len(frame_list))
+    print(stop)
+
+def on_press(key):
+    global stop
+    if key == keyboard.Key.space:
+        stop = True
+        return False
 
 def calculate_sha1(file_path):
     sha1_hash = hashlib.sha1()
@@ -81,6 +96,7 @@ def convert_to_gif(args):
 def show(f):
     print("GENERATING VIEW...")
     try:
+        from pyglet.window import key ######################################################################################
         with Image.open(f) as img:
             w, h = img.size
 
@@ -106,14 +122,14 @@ def check_positive(v):
     return ivalue
 
 def get_size_format(b, factor=1024, suffix="B"):
-	for unit in ["","K","M","G","T","P","E","Z"]:
-	    if b < factor:
-	        return f"{b:.4f}{unit}{suffix}"
-	    b /= factor
-	return f"{b:.4f}Y{suffix}"
+    for unit in ["","K","M","G","T","P","E","Z"]:
+        if b < factor:
+            return f"{b:.4f}{unit}{suffix}"
+        b /= factor
+    return f"{b:.4f}Y{suffix}"
     
 def main():
-    parser = argparse.ArgumentParser(prog="MKGIG 3.1",conflict_handler='resolve',
+    parser = argparse.ArgumentParser(prog="MKGIF 3.1", conflict_handler='resolve',
                                      description="Create gifs from videos in command line or convert '.webp' files into '.gif'.",
                                      epilog = "REPO: https://github.com/antonioam82/MKGIF")
     
