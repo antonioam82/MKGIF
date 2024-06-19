@@ -3,8 +3,6 @@
 import pyfiglet
 import ffmpeg
 import pyglet
-#from pyglet.window import key
-#from pyglet.window import key as pyglet_key
 import argparse
 from PIL import Image
 import random
@@ -64,6 +62,7 @@ def make_gif(args):
 
         if stop:
             print(Fore.YELLOW + Style.DIM + "\nFrame processing interrupted by user." + Fore.RESET + Style.RESET_ALL)
+            pbar.disable = True
             break
         
     cap.release()
