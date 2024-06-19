@@ -47,7 +47,7 @@ def make_gif(args):
     video_streams = [stream for stream in probe["streams"] if stream["codec_type"] == "video"]
     num_frames = video_streams[0]['nb_frames']
 
-    print("PROCESSING...")
+    print("PROCESSING...(PRESS SPACE BAR TO CANCEL)")
     frame_list = []
 
     cap = cv2.VideoCapture(args.source)
@@ -86,6 +86,7 @@ def calculate_sha1(file_path):
     
 def convert_to_gif(args):
     print(c_index+b_index+pyfiglet.figlet_format('MKGIF',font='graffiti')+Fore.RESET+Style.RESET_ALL)
+    print("CONVERTING WEBP TO GIF...")
     file = Image.open(args.source)
     file.save(args.destination,'gif',save_all=True,background=0)
     file.close()
@@ -144,7 +145,10 @@ def main():
 
     if args.destination is None:
             hash_name = calculate_sha1(args.source)
-            args.destination = f"{hash_name}.gif"    
+            if file_extension == '.webp':
+                args.destination = f"{hash_name}.gif"
+            else:
+                args.destination = f"{hash_name}{args.speed}{args.size}.gif"
     
     if file_extension == '.webp':
         if args.size != 100:
