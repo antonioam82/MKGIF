@@ -57,6 +57,7 @@ def make_gif(args):
     while ret:
         ret, frame = cap.read()
         if ret:
+            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             frame_list.append(frame)
             pbar.update(1)
 
