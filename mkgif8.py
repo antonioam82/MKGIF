@@ -54,7 +54,6 @@ def make_gif(args):
         cap = cv2.VideoCapture(args.source)
         pbar = tqdm(total=int(num_frames), unit='frames', ncols=100)
         ret = True
-        print(ei)
 
         while ret:
             ret, frame = cap.read()
