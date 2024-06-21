@@ -22,6 +22,7 @@ bright = {0:Style.DIM,1:Style.NORMAL,2:Style.BRIGHT}
 c_index = color[random.randint(0,6)]
 b_index = bright[random.randint(0,2)]
 stop = False
+done = True
 
 def check_result_ext(file):
     name, ex = os.path.splitext(file)
@@ -65,6 +66,7 @@ def make_gif(args):
             if stop:
                 print(Fore.YELLOW + Style.DIM + "\nFrame processing interrupted by user." + Fore.RESET + Style.RESET_ALL)
                 pbar.disable = True
+                done = False
                 break
         
         cap.release()
@@ -72,10 +74,12 @@ def make_gif(args):
         listener.stop()
         print('Frames: ', len(frame_list))
         print(stop)
+        print(done)
         
     except Exception as e:
         pbar.close()
         listener.stop()
+        done = False
         error = str(e)
         print(Fore.RED + Style.DIM + f"\nUNEXPECTED ERROR: {error}" + Fore.RESET + Style.RESET_ALL)
         
@@ -93,13 +97,19 @@ def calculate_sha1(file_path):
     return sha1_hash.hexdigest()
     
 def convert_to_gif(args):
-    print(c_index+b_index+pyfiglet.figlet_format('MKGIF',font='graffiti')+Fore.RESET+Style.RESET_ALL)
-    print("CONVERTING WEBP TO GIF...")
-    file = Image.open(args.source)
-    file.save(args.destination,'gif',save_all=True,background=0)
-    file.close()
-    size = get_size_format(os.stat(args.destination).st_size)
-    print(f"Created '{args.destination}' with size {size} from '{args.source}'.")
+    global done
+    try:
+        print(c_index+b_index+pyfiglet.figlet_format('MKGIF',font='graffiti')+Fore.RESET+Style.RESET_ALL)
+        print("CONVERTING WEBP TO GIF...")
+        file = Image.open(args.source)
+        file.save(args.destination,'gif',save_all=True,background=0)
+        file.close()
+        size = get_size_format(os.stat(args.destination).st_size)
+        print(f"Created '{args.destination}' with size {size} from '{args.source}'.")
+    except Exception as e:
+        done = False
+        error = str(e)
+        print(Fore.RED + Style.DIM + f"\nUNEXPECTED ERROR: {error}" + Fore.RESET + Style.RESET_ALL)
 
 def show(f):
     print("GENERATING VIEW...")
@@ -157,7 +167,7 @@ def main():
                 args.destination = f"{hash_name}.gif"
             else:
                 args.destination = f"{hash_name}{args.speed}{args.size}.gif"
-    
+
     if file_extension == '.webp':
         if args.size != 100:
             parser.error(Fore.RED+Style.BRIGHT+"-sz/--size spec is not allowed for '.webp' to '.gif' conversion."+Fore.RESET+Style.RESET_ALL)
@@ -165,12 +175,12 @@ def main():
             convert_to_gif(args)
     else:
         make_gif(args)
-
+        
     if args.delete_source:
         os.remove(args.source)
         print(f"Removed file '{args.source}'.")
 
-    if args.show:
+    if args.show and done == True:
         show(args.destination)
     
 if __name__=='__main__':
