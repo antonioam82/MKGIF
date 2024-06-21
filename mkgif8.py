@@ -40,38 +40,46 @@ def check_source_ext(file):
     return file
 
 def make_gif(args):
-    listener = keyboard.Listener(on_press=on_press)
-    listener.start()
-    print(c_index+b_index+pyfiglet.figlet_format('MKGIF',font='graffiti')+Fore.RESET+Style.RESET_ALL)
-    probe = ffmpeg.probe(args.source)
-    video_streams = [stream for stream in probe["streams"] if stream["codec_type"] == "video"]
-    num_frames = video_streams[0]['nb_frames']
+    try:
+        listener = keyboard.Listener(on_press=on_press)
+        listener.start()
+        print(c_index+b_index+pyfiglet.figlet_format('MKGIF',font='graffiti')+Fore.RESET+Style.RESET_ALL)
+        probe = ffmpeg.probe(args.source)
+        video_streams = [stream for stream in probe["streams"] if stream["codec_type"] == "video"]
+        num_frames = video_streams[0]['nb_frames']
 
-    print("PROCESSING...(PRESS SPACE BAR TO CANCEL)")
-    frame_list = []
+        print("PROCESSING...(PRESS SPACE BAR TO CANCEL)")
+        frame_list = []
 
-    cap = cv2.VideoCapture(args.source)
-    pbar = tqdm(total=int(num_frames), unit='frames', ncols=100)
-    ret = True
+        cap = cv2.VideoCapture(args.source)
+        pbar = tqdm(total=int(num_frames), unit='frames', ncols=100)
+        ret = True
+        print(ei)
 
-    while ret:
-        ret, frame = cap.read()
-        if ret:
-            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            frame_list.append(frame)
-            pbar.update(1)
+        while ret:
+            ret, frame = cap.read()
+            if ret:
+                frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                frame_list.append(frame)
+                pbar.update(1)
 
-        if stop:
-            print(Fore.YELLOW + Style.DIM + "\nFrame processing interrupted by user." + Fore.RESET + Style.RESET_ALL)
-            pbar.disable = True
-            break
+            if stop:
+                print(Fore.YELLOW + Style.DIM + "\nFrame processing interrupted by user." + Fore.RESET + Style.RESET_ALL)
+                pbar.disable = True
+                break
         
-    cap.release()
-    pbar.close()
-    listener.stop()
-    print('Frames: ', len(frame_list))
-    print(stop)
-
+        cap.release()
+        pbar.close()
+        listener.stop()
+        print('Frames: ', len(frame_list))
+        print(stop)
+        
+    except Exception as e:
+        pbar.close()
+        listener.stop()
+        error = str(e)
+        print(Fore.RED + Style.DIM + f"\nUNEXPECTED ERROR: {error}" + Fore.RESET + Style.RESET_ALL)
+        
 def on_press(key):
     global stop
     if key == keyboard.Key.space:
@@ -158,7 +166,6 @@ def main():
             convert_to_gif(args)
     else:
         make_gif(args)
-        print("OK")
 
     if args.delete_source:
         os.remove(args.source)
