@@ -40,7 +40,8 @@ def check_source_ext(file):
         raise argparse.ArgumentTypeError(Fore.RED+Style.BRIGHT+f"FILE NOT FOUND: File '{file}' not found."+Fore.RESET+Style.RESET_ALL)
     return file
 
-def make_gif(args):
+def read_video(args):
+    global done
     try:
         listener = keyboard.Listener(on_press=on_press)
         listener.start()
@@ -174,14 +175,15 @@ def main():
         else:
             convert_to_gif(args)
     else:
-        make_gif(args)
+        read_video(args)
         
     if args.delete_source:
         os.remove(args.source)
         print(f"Removed file '{args.source}'.")
 
     if args.show and done == True:
-        show(args.destination)
+        #show(args.destination)
+        print("TIME TO SHOW")
     
 if __name__=='__main__':
     main()
