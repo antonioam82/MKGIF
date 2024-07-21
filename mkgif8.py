@@ -176,14 +176,15 @@ def main():
             convert_to_gif(args)
     else:
         read_video(args)
+        print("STOPPED: ",stop)
         
     if args.delete_source:
         os.remove(args.source)
         print(f"Removed file '{args.source}'.")
 
     if args.show and done == True:
-        #show(args.destination)
-        print("TIME TO SHOW")
+        show(args.destination)
+        #print("TIME TO SHOW")
     
 if __name__=='__main__':
     main()
