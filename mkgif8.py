@@ -41,8 +41,17 @@ def check_source_ext(file):
         raise argparse.ArgumentTypeError(Fore.RED+Style.BRIGHT+f"FILE NOT FOUND: File '{file}' not found."+Fore.RESET+Style.RESET_ALL)
     return file
 
-def create_gif(args):
-    print('DONE')
+'''def create_gif(args,frame_list):
+    output_frames = []
+    listener = keyboard.Listener(on_press=on_press)
+    listener.start()
+
+    for frame in frame_list:
+        img = Image.fromarray(frame)
+        img = img.resize(
+    
+    
+    print('DONE')'''
     
 
 def read_video(args):
@@ -54,6 +63,8 @@ def read_video(args):
         probe = ffmpeg.probe(args.source)
         video_streams = [stream for stream in probe["streams"] if stream["codec_type"] == "video"]
         num_frames = video_streams[0]['nb_frames']
+        width = video_streams[0]['width']
+        height = video_streams[0]['height']
 
         print("PROCESSING...(PRESS SPACE BAR TO CANCEL)")
         #frame_list = []
@@ -184,7 +195,8 @@ def main():
         print("STOPPED: ",stop)
         print("NUMBER OF FRAMES: ",len(frame_list))
         if not stop:
-            create_gif(args)
+            #create_gif(args,frame_listprint)
+            print("ok")
         
     if args.delete_source:
         os.remove(args.source)
