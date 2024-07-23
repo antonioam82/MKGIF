@@ -40,6 +40,10 @@ def check_source_ext(file):
         raise argparse.ArgumentTypeError(Fore.RED+Style.BRIGHT+f"FILE NOT FOUND: File '{file}' not found."+Fore.RESET+Style.RESET_ALL)
     return file
 
+def create_gif(args):
+    print('DONE')
+    
+
 def read_video(args):
     global done
     try:
@@ -177,6 +181,8 @@ def main():
     else:
         read_video(args)
         print("STOPPED: ",stop)
+        if not stop:
+            create_gif(args)
         
     if args.delete_source:
         os.remove(args.source)
