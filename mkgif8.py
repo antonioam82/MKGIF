@@ -41,17 +41,18 @@ def check_source_ext(file):
         raise argparse.ArgumentTypeError(Fore.RED+Style.BRIGHT+f"FILE NOT FOUND: File '{file}' not found."+Fore.RESET+Style.RESET_ALL)
     return file
 
-'''def create_gif(args,frame_list):
+def create_gif(args,frame_list,w,h):
     output_frames = []
     listener = keyboard.Listener(on_press=on_press)
     listener.start()
 
     for frame in frame_list:
         img = Image.fromarray(frame)
-        img = img.resize(
+        img = img.resize((int(w * args.size), int(h * args.size)), Image.ANTIALIAS)
+        output_frames.append(img)
     
     
-    print('DONE')'''
+    print('DONE')
     
 
 def read_video(args):
