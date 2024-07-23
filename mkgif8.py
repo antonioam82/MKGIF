@@ -23,6 +23,7 @@ c_index = color[random.randint(0,6)]
 b_index = bright[random.randint(0,2)]
 stop = False
 done = True
+frame_list = []
 
 def check_result_ext(file):
     name, ex = os.path.splitext(file)
@@ -45,7 +46,7 @@ def create_gif(args):
     
 
 def read_video(args):
-    global done
+    global done, frame_list
     try:
         listener = keyboard.Listener(on_press=on_press)
         listener.start()
@@ -55,7 +56,7 @@ def read_video(args):
         num_frames = video_streams[0]['nb_frames']
 
         print("PROCESSING...(PRESS SPACE BAR TO CANCEL)")
-        frame_list = []
+        #frame_list = []
 
         cap = cv2.VideoCapture(args.source)
         pbar = tqdm(total=int(num_frames), unit='frames', ncols=100)
@@ -181,6 +182,7 @@ def main():
     else:
         read_video(args)
         print("STOPPED: ",stop)
+        print("NUMBER OF FRAMES: ",len(frame_list))
         if not stop:
             create_gif(args)
         
