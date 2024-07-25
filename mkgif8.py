@@ -58,6 +58,9 @@ def create_gif(args,frame_list,w,h,num_frames):
 
     pbar.close()
     listener.stop()
+
+    '''output_frames[0].save(args.destination,save_all=True,append_images=output_frames[1:],
+                          optimize=False,loop=0)'''
     
     print('DONE')
     
