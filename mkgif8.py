@@ -25,6 +25,7 @@ stop = False
 done = True
 frame_list = []
 
+
 def check_result_ext(file):
     name, ex = os.path.splitext(file)
     if ex != '.gif':
@@ -41,22 +42,28 @@ def check_source_ext(file):
         raise argparse.ArgumentTypeError(Fore.RED+Style.BRIGHT+f"FILE NOT FOUND: File '{file}' not found."+Fore.RESET+Style.RESET_ALL)
     return file
 
-def create_gif(args,frame_list,w,h):
+def create_gif(args,frame_list,w,h,num_frames):
     output_frames = []
     listener = keyboard.Listener(on_press=on_press)
     listener.start()
 
+    pbar = tqdm(total=int(num_frames), unit='frames', ncols=100)
+    factor = args.size/100
+
     for frame in frame_list:
         img = Image.fromarray(frame)
-        img = img.resize((int(w * args.size), int(h * args.size)), Image.ANTIALIAS)
+        img = img.resize((int(w * factor), int(h * factor)), Image.LANCZOS)
         output_frames.append(img)
-    
+        pbar.update(1)
+
+    pbar.close()
+    listener.stop()
     
     print('DONE')
     
 
 def read_video(args):
-    global done, frame_list
+    global done, frame_list, width, height, num_frames
     try:
         listener = keyboard.Listener(on_press=on_press)
         listener.start()
@@ -196,7 +203,7 @@ def main():
         print("STOPPED: ",stop)
         print("NUMBER OF FRAMES: ",len(frame_list))
         if not stop:
-            #create_gif(args,frame_listprint)
+            create_gif(args,frame_list,width,height,num_frames)
             print("ok")
         
     if args.delete_source:
