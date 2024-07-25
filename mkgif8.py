@@ -47,6 +47,8 @@ def create_gif(args,frame_list,w,h,num_frames):
     listener = keyboard.Listener(on_press=on_press)
     listener.start()
 
+    print("\nCREATING YOUR GIF...(PRESS SPACE BAR TO CANCEL)")
+
     pbar = tqdm(total=int(num_frames), unit='frames', ncols=100)
     factor = args.size/100
 
@@ -62,7 +64,7 @@ def create_gif(args,frame_list,w,h,num_frames):
     '''output_frames[0].save(args.destination,save_all=True,append_images=output_frames[1:],
                           optimize=False,loop=0)'''
     
-    print('DONE')
+    #print('DONE')
     
 
 def read_video(args):
@@ -100,9 +102,9 @@ def read_video(args):
         cap.release()
         pbar.close()
         listener.stop()
-        print('Frames: ', len(frame_list))
-        print(stop)
-        print(done)
+        #print('Frames: ', len(frame_list))
+        #print(stop)
+        #print(done)
         
     except Exception as e:
         pbar.close()
@@ -203,11 +205,11 @@ def main():
             convert_to_gif(args)
     else:
         read_video(args)
-        print("STOPPED: ",stop)
-        print("NUMBER OF FRAMES: ",len(frame_list))
+        #print("STOPPED: ",stop)
+        #print("NUMBER OF FRAMES: ",len(frame_list))
         if not stop:
             create_gif(args,frame_list,width,height,num_frames)
-            print("ok")
+            #print("ok")
         
     if args.delete_source:
         os.remove(args.source)
