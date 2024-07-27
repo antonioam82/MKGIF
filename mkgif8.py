@@ -60,11 +60,13 @@ def create_gif(args,frame_list,w,h,num_frames):
 
     pbar.close()
     listener.stop()
-
-    '''output_frames[0].save(args.destination,save_all=True,append_images=output_frames[1:],
-                          optimize=False,loop=0)'''
     
-    #print('DONE')
+    print("\nSAVING YOUR GIF...")
+    output_frames[0].save(args.destination,save_all=True,append_images=output_frames[1:],
+                          optimize=False,loop=0)
+
+    size = get_size_format(os.stat(args.destination).st_size) 
+    print(f"Created gif '{args.destination}' with size '{size}' from '{args.source}'.")
     
 
 def read_video(args):
