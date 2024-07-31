@@ -62,8 +62,14 @@ def create_gif(args,frame_list,w,h,num_frames,video_fps):
     listener.stop()
     
     print("\nSAVING YOUR GIF...")
+    #print("DURATION: ",1000 // video_fps)
+    if args.duration:
+        duration = args.duration
+    else:
+        duration = 1000 // video_fps
+        
     output_frames[0].save(args.destination,save_all=True,append_images=output_frames[1:],
-                          optimize=False, duration = 1000 // video_fps, loop=0)
+                          optimize=False, duration = duration, loop=0)
 
     size = get_size_format(os.stat(args.destination).st_size) 
     print(f"Created gif '{args.destination}' with size '{size}' from '{args.source}'.")
@@ -188,7 +194,7 @@ def main():
     parser.add_argument('-dest','--destination',type=check_result_ext,default=None,help="Destination file name")
     parser.add_argument('-sz','--size',default=100,type=check_positive,help='Relative size of the gif (100 by default)')
     parser.add_argument('-delsrc','--delete_source',action='store_true',help='Generate gif and remove source file')
-    parser.add_argument('-spd','--speed',default=100,type=check_positive,help='Relative speed of the gif (100 by default)')
+    parser.add_argument('-dur','--duration',default=None,type=check_positive,help='Duration of the gif')
     parser.add_argument('-shw','--show',action='store_true',help='Show result file')
 
     args = parser.parse_args()
@@ -226,4 +232,5 @@ def main():
     
 if __name__=='__main__':
     main()
+
 
