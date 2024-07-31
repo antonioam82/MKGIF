@@ -42,7 +42,7 @@ def check_source_ext(file):
         raise argparse.ArgumentTypeError(Fore.RED+Style.BRIGHT+f"FILE NOT FOUND: File '{file}' not found."+Fore.RESET+Style.RESET_ALL)
     return file
 
-def create_gif(args,frame_list,w,h,num_frames):
+def create_gif(args,frame_list,w,h,num_frames,video_fps):
     output_frames = []
     listener = keyboard.Listener(on_press=on_press)
     listener.start()
@@ -63,14 +63,14 @@ def create_gif(args,frame_list,w,h,num_frames):
     
     print("\nSAVING YOUR GIF...")
     output_frames[0].save(args.destination,save_all=True,append_images=output_frames[1:],
-                          optimize=False,loop=0)
+                          optimize=False, duration = 1000 // video_fps, loop=0)
 
     size = get_size_format(os.stat(args.destination).st_size) 
     print(f"Created gif '{args.destination}' with size '{size}' from '{args.source}'.")
     
 
 def read_video(args):
-    global done, frame_list, width, height, num_frames
+    global done, frame_list, width, height, num_frames, video_fps
     try:
         listener = keyboard.Listener(on_press=on_press)
         listener.start()
@@ -80,6 +80,7 @@ def read_video(args):
         num_frames = video_streams[0]['nb_frames']
         width = video_streams[0]['width']
         height = video_streams[0]['height']
+        video_fps = video_streams[0]['avg_frame_rate']
 
         print("PROCESSING...(PRESS SPACE BAR TO CANCEL)")
         #frame_list = []
@@ -212,7 +213,7 @@ def main():
         #print("STOPPED: ",stop)
         #print("NUMBER OF FRAMES: ",len(frame_list))
         if not stop:
-            create_gif(args,frame_list,width,height,num_frames)
+            create_gif(args,frame_list,width,height,num_frames,eval(video_fps))
             #print("ok")
         
     if args.delete_source:
