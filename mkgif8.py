@@ -43,6 +43,7 @@ def check_source_ext(file):
     return file
 
 def create_gif(args,frame_list,w,h,num_frames,video_fps):
+    global done
     output_frames = []
     listener = keyboard.Listener(on_press=on_press)
     listener.start()
@@ -58,21 +59,29 @@ def create_gif(args,frame_list,w,h,num_frames,video_fps):
         output_frames.append(img)
         pbar.update(1)
 
+        if stop:
+            print(Fore.YELLOW + Style.DIM + "\nGif creation interrupted by user." + Fore.RESET + Style.RESET_ALL)
+            pbar.disable = True
+            done = False
+            break
+
     pbar.close()
     listener.stop()
-    
-    print("\nSAVING YOUR GIF...")
-    #print("DURATION: ",1000 // video_fps)
-    if args.duration:
-        duration = args.duration
-    else:
-        duration = 1000 // video_fps
+
+    if done == True:
+        print("\nSAVING YOUR GIF...")
+        #print("DURATION: ",1000 // video_fps)
+        if args.duration:
+            duration = args.duration
+        else:
+            duration = 100 // video_fps
+            print(duration)
         
-    output_frames[0].save(args.destination,save_all=True,append_images=output_frames[1:],
+        output_frames[0].save(args.destination,save_all=True,append_images=output_frames[1:],
                           optimize=False, duration = duration, loop=0)
 
-    size = get_size_format(os.stat(args.destination).st_size) 
-    print(f"Created gif '{args.destination}' with size '{size}' from '{args.source}'.")
+        size = get_size_format(os.stat(args.destination).st_size) 
+        print(f"Created gif '{args.destination}' with size '{size}' from '{args.source}'.")
     
 
 def read_video(args):
