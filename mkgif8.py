@@ -71,10 +71,10 @@ def create_gif(args,frame_list,w,h,num_frames,video_fps):
     if done == True:
         print("\nSAVING YOUR GIF...")
         #print("DURATION: ",1000 // video_fps)
-        if args.duration:
-            duration = args.duration
+        if args.frames_per_second:
+            duration = 1000 // float(args.frames_per_second)
         else:
-            duration = 100 // video_fps
+            duration = 1000 // video_fps
             print(duration)
         
         output_frames[0].save(args.destination,save_all=True,append_images=output_frames[1:],
@@ -203,7 +203,7 @@ def main():
     parser.add_argument('-dest','--destination',type=check_result_ext,default=None,help="Destination file name")
     parser.add_argument('-sz','--size',default=100,type=check_positive,help='Relative size of the gif (100 by default)')
     parser.add_argument('-delsrc','--delete_source',action='store_true',help='Generate gif and remove source file')
-    parser.add_argument('-dur','--duration',default=None,type=check_positive,help='Duration of the gif')
+    parser.add_argument('-fps','--frames_per_second',default=None,type=check_positive,help='Duration of the gif')
     parser.add_argument('-shw','--show',action='store_true',help='Show result file')
 
     args = parser.parse_args()
@@ -214,8 +214,8 @@ def main():
             if file_extension == '.webp':
                 args.destination = f"{hash_name}.gif"
             else:
-                if args.duration:
-                    duration = int(args.duration)
+                if args.frames_per_second:
+                    duration = int(args.frames_per_second)
                 else:
                     duration = 0
                 size = int(args.size)
