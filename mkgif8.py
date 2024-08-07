@@ -214,12 +214,12 @@ def main():
             if file_extension == '.webp':
                 args.destination = f"{hash_name}.gif"
             else:
-                if args.frames_per_second:
-                    duration = int(args.frames_per_second)
+                if args.speed:
+                    speed = int(args.speed)
                 else:
-                    duration = 0
+                    speed = 0
                 size = int(args.size)
-                args.destination = f"{hash_name}{duration}{size}.gif"
+                args.destination = f"{hash_name}{speed}{size}.gif"
 
     if file_extension == '.webp':
         if args.size != 100:
