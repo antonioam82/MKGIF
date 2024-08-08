@@ -96,6 +96,8 @@ def read_video(args):
         height = video_streams[0]['height']
         video_fps = video_streams[0]['avg_frame_rate']
 
+        print(f'NUMBER OF FRAMES: {num_frames} | WIDTH: {width} | HEIGHT: {height} | FRAME RATE: {video_fps}\n')
+
         print("PROCESSING...(PRESS SPACE BAR TO CANCEL)")
         #frame_list = []
 
