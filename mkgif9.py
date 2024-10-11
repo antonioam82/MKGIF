@@ -16,14 +16,13 @@ init()
 color = {0:Fore.RED,1:Fore.GREEN,2:Fore.YELLOW,
          3:Fore.BLUE,4:Fore.CYAN,5:Fore.MAGENTA,6:Fore.WHITE}
  
-bright = {0:Style.DIM,1:Style.NORMAL,2:Style.BRIGHT}
+bright = {0:Style.BRIGHT,1:Style.NORMAL}#2:Style.DIM}
  
 c_index = color[random.randint(0,6)]
-b_index = bright[random.randint(0,2)]
+b_index = bright[random.randint(0,1)]
 stop = False
 done = True
 frame_list = []
- 
  
 def check_result_ext(file):
     name, ex = os.path.splitext(file)
@@ -59,7 +58,7 @@ def create_gif(args,frame_list,w,h,num_frames,video_fps):
         pbar.update(1)
  
         if stop:
-            print(Fore.YELLOW + Style.DIM + "\nGif creation interrupted by user." + Fore.RESET + Style.RESET_ALL)
+            print(Fore.YELLOW + Style.NORMAL + "\nGif creation interrupted by user." + Fore.RESET + Style.RESET_ALL)
             pbar.disable = True
             done = False
             break
@@ -120,7 +119,7 @@ def read_video(args):
                 pbar.update(1)
  
             if stop:
-                print(Fore.YELLOW + Style.DIM + "\nFrame processing interrupted by user." + Fore.RESET + Style.RESET_ALL)
+                print(Fore.YELLOW + Style.NORMAL + "\nFrame processing interrupted by user." + Fore.RESET + Style.RESET_ALL)
                 pbar.disable = True
                 done = False
                 break
@@ -240,7 +239,7 @@ def main():
         #print("STOPPED: ",stop)
         #print("NUMBER OF FRAMES: ",len(frame_list))
         if not stop:
-            create_gif(args,frame_list,width,height,num_frames,eval(video_fps))
+            create_gif(args,frame_list,width,height,num_frames,video_fps)
             #print("ok")
  
     if args.delete_source:
