@@ -108,7 +108,7 @@ def read_video(args):
         #frame_list = []
  
         
-        pbar = tqdm(total=int(num_frames), unit='frames', ncols=100)
+        pbar = tqdm(total=num_frames, unit='frames', ncols=100)#
         ret = True
  
         while ret:
