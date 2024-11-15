@@ -33,7 +33,8 @@ def check_result_ext(file):
 def check_source_ext(file):
     supported_formats = ['.mp4','.avi','.mov','.wmv','.rm','.webp']
     name, ex = os.path.splitext(file)
-    if file in os.listdir():
+    #if file in os.listdir():
+    if os.path.exists(file):
         if ex not in supported_formats:
             raise argparse.ArgumentTypeError(Fore.RED+Style.BRIGHT+f"Source file must be '.mp4', '.avi', '.mov', '.wmv', '.rm' or '.webp' ('{ex}' is not valid)."+Fore.RESET+Style.RESET_ALL)
     else:
@@ -108,7 +109,7 @@ def read_video(args):
         #frame_list = []
  
         
-        pbar = tqdm(total=num_frames, unit='frames', ncols=100)#
+        pbar = tqdm(total=int(num_frames), unit='frames', ncols=100)
         ret = True
  
         while ret:
