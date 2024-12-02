@@ -80,11 +80,14 @@ def create_gif(args,frame_list,w,h,num_frames,video_fps):
  
         size = get_size_format(os.stat(args.destination).st_size)
         print(f"Created gif '{args.destination}' with size '{size}' from '{args.source}'.")
- 
- 
+
 def read_video(args):
     global done, frame_list, width, height, num_frames, video_fps
+    listener = None
+    pbar = None  # Inicializar como None para evitar errores si no se crean
+    
     try:
+        
         listener = keyboard.Listener(on_press=on_press)
         listener.start()
         print(c_index+b_index+pyfiglet.figlet_format('MKGIF',font='graffiti')+Fore.RESET+Style.RESET_ALL)
@@ -93,51 +96,46 @@ def read_video(args):
         num_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
         width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
         height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-        video_fps = cap.get(cv2.CAP_PROP_FPS)#
-        #duration = num_frames / fps
+        video_fps = cap.get(cv2.CAP_PROP_FPS)
         
-        #probe = ffmpeg.probe(args.source)
-        #video_streams = [stream for stream in probe["streams"] if stream["codec_type"] == "video"]
-        #num_frames = video_streams[0]['nb_frames']
-        #width = video_streams[0]['width']
-        #height = video_streams[0]['height']
-        #video_fps = video_streams[0]['avg_frame_rate']
- 
         print(f'NUMBER OF FRAMES: {num_frames} | WIDTH: {width} | HEIGHT: {height} | FRAME RATE: {video_fps}\n')
- 
+
         print("PROCESSING...(PRESS SPACE BAR TO CANCEL)")
-        #frame_list = []
- 
         
         pbar = tqdm(total=int(num_frames), unit='frames', ncols=100)
         ret = True
- 
+        #print(dgdg)  #Error
         while ret:
             ret, frame = cap.read()
             if ret:
                 frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
                 frame_list.append(frame)
                 pbar.update(1)
- 
+
             if stop:
                 print(Fore.YELLOW + Style.NORMAL + "\nFrame processing interrupted by user." + Fore.RESET + Style.RESET_ALL)
                 pbar.disable = True
                 done = False
                 break
- 
+
         cap.release()
-        pbar.close()
-        listener.stop()
-        #print('Frames: ', len(frame_list))
-        #print(stop)
-        #print(done)
- 
+
     except Exception as e:
-        pbar.close()
-        listener.stop()
+        if pbar:  # Solo cerrar si pbar fue creado
+            pbar.close()
+        if listener:  # Solo detener el listener si fue creado
+            listener.stop()
         done = False
         error = str(e)
-        print(Fore.RED + Style.DIM + f"\nUNEXPECTED ERROR: {error}" + Fore.RESET + Style.RESET_ALL)
+        print(Fore.RED + Style.BRIGHT + f"\nUNEXPECTED ERROR: {error}" + Fore.RESET + Style.RESET_ALL)
+    
+    finally:
+        if pbar:  # Asegúrate de cerrar pbar si se creó
+            pbar.close()
+        if listener:  # Asegúrate de detener el listener si se creó
+            listener.stop()
+
+ 
  
 def on_press(key):
     global stop
@@ -165,7 +163,7 @@ def convert_to_gif(args):
     except Exception as e:
         done = False
         error = str(e)
-        print(Fore.RED + Style.DIM + f"\nUNEXPECTED ERROR: {error}" + Fore.RESET + Style.RESET_ALL)
+        print(Fore.RED + Style.BRIGHT + f"\nUNEXPECTED ERROR: {error}" + Fore.RESET + Style.RESET_ALL)
  
 def show(f):
     print("GENERATING VIEW...")
@@ -239,7 +237,7 @@ def main():
         read_video(args)
         #print("STOPPED: ",stop)
         #print("NUMBER OF FRAMES: ",len(frame_list))
-        if not stop:
+        if not stop and done:
             create_gif(args,frame_list,width,height,num_frames,video_fps)
             #print("ok")
  
