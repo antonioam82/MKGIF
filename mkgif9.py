@@ -33,7 +33,6 @@ def check_result_ext(file):
 def check_source_ext(file):
     supported_formats = ['.mp4','.avi','.mov','.wmv','.rm','.webp']
     name, ex = os.path.splitext(file)
-    #if file in os.listdir():
     if os.path.exists(file):
         if ex not in supported_formats:
             raise argparse.ArgumentTypeError(Fore.RED+Style.BRIGHT+f"Source file must be '.mp4', '.avi', '.mov', '.wmv', '.rm' or '.webp' ('{ex}' is not valid)."+Fore.RESET+Style.RESET_ALL)
@@ -44,42 +43,50 @@ def check_source_ext(file):
 def create_gif(args,frame_list,w,h,num_frames,video_fps):
     global done
     output_frames = []
-    listener = keyboard.Listener(on_press=on_press)
-    listener.start()
+    listener = None
+    pbar = None
+    try:
+        
+        listener = keyboard.Listener(on_press=on_press)
+        listener.start()
  
-    print("\nCREATING YOUR GIF...(PRESS SPACE BAR TO CANCEL)")
+        print("\nCREATING YOUR GIF...(PRESS SPACE BAR TO CANCEL)")
  
-    pbar = tqdm(total=int(num_frames), unit='frames', ncols=100)
-    factor = args.size/100
+        pbar = tqdm(total=int(num_frames), unit='frames', ncols=100)
+        factor = args.size/100
  
-    for frame in frame_list:
-        img = Image.fromarray(frame)
-        img = img.resize((int(w * factor), int(h * factor)), Image.LANCZOS)
-        output_frames.append(img)
-        pbar.update(1)
+        for frame in frame_list:
+            img = Image.fromarray(frame)
+            img = img.resize((int(w * factor), int(h * factor)), Image.LANCZOS)
+            output_frames.append(img)
+            pbar.update(1)
  
-        if stop:
-            print(Fore.YELLOW + Style.NORMAL + "\nGif creation interrupted by user." + Fore.RESET + Style.RESET_ALL)
-            pbar.disable = True
-            done = False
-            break
+            if stop:
+                print(Fore.YELLOW + Style.NORMAL + "\nGif creation interrupted by user." + Fore.RESET + Style.RESET_ALL)
+                pbar.disable = True
+                done = False
+                break
+        pbar.close()
+        listener.stop()
  
-    pbar.close()
-    listener.stop()
+        if done == True:
+            print("\nSAVING YOUR GIF...")
+            if args.speed:
+                duration = 1000 / (video_fps * (args.speed / 100))
+            else:
+                duration = 1000 / video_fps
  
-    if done == True:
-        print("\nSAVING YOUR GIF...")
-        #print("DURATION: ",1000 // video_fps)
-        if args.speed:
-            duration = 1000 / (video_fps * (args.speed / 100))
-        else:
-            duration = 1000 / video_fps
- 
-        output_frames[0].save(args.destination,save_all=True,append_images=output_frames[1:],
+            output_frames[0].save(args.destination,save_all=True,append_images=output_frames[1:],
                           optimize=False, duration = duration, loop=0)
  
-        size = get_size_format(os.stat(args.destination).st_size)
-        print(f"Created gif '{args.destination}' with size '{size}' from '{args.source}'.")
+            size = get_size_format(os.stat(args.destination).st_size)
+            print(f"Created gif '{args.destination}' with size '{size}' from '{args.source}'.")
+
+    except Exception as e:
+        error = str(e)
+        print(Fore.RED+Style.BRIGHT+f"\nUNEXPECTED ERROR: {error}"+Fore.RESET+Style.RESET_ALL)
+        done = False
+        
 
 def read_video(args):
     global done, frame_list, width, height, num_frames, video_fps
@@ -87,7 +94,6 @@ def read_video(args):
     pbar = None  # Inicializar como None para evitar errores si no se crean
     
     try:
-        
         listener = keyboard.Listener(on_press=on_press)
         listener.start()
         print(c_index+b_index+pyfiglet.figlet_format('MKGIF',font='graffiti')+Fore.RESET+Style.RESET_ALL)
@@ -104,7 +110,7 @@ def read_video(args):
         
         pbar = tqdm(total=int(num_frames), unit='frames', ncols=100)
         ret = True
-        #print(dgdg)  #Error
+        #print(dbd)
         while ret:
             ret, frame = cap.read()
             if ret:
@@ -129,14 +135,12 @@ def read_video(args):
         error = str(e)
         print(Fore.RED + Style.BRIGHT + f"\nUNEXPECTED ERROR: {error}" + Fore.RESET + Style.RESET_ALL)
     
-    finally:
+    '''finally:
         if pbar:  # Asegúrate de cerrar pbar si se creó
             pbar.close()
         if listener:  # Asegúrate de detener el listener si se creó
-            listener.stop()
+            listener.stop()'''
 
- 
- 
 def on_press(key):
     global stop
     if key == keyboard.Key.space:
