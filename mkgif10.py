@@ -43,46 +43,62 @@ def check_source_ext(file):
 def create_gif(args,frame_list,w,h,num_frames,video_fps):
     global done
     output_frames = []
-    listener = keyboard.Listener(on_press=on_press)
-    listener.start()
+    listener = None
+    pbar = None
+
+    try:
+        print(hhddh)
+        listener = keyboard.Listener(on_press=on_press)
+        listener.start()
  
-    print("\nCREATING YOUR GIF...(PRESS SPACE BAR TO CANCEL)")
+        print("\nCREATING YOUR GIF...(PRESS SPACE BAR TO CANCEL)")
  
-    pbar = tqdm(total=total_frames, unit='frames', ncols=100) ##############
-    factor = args.size/100
+        pbar = tqdm(total=total_frames, unit='frames', ncols=100) ##############
+        factor = args.size/100
  
-    for frame in frame_list:
-        img = Image.fromarray(frame)
-        img = img.resize((int(w * factor), int(h * factor)), Image.LANCZOS)
-        output_frames.append(img)
-        pbar.update(1)
+        for frame in frame_list:
+            img = Image.fromarray(frame)
+            img = img.resize((int(w * factor), int(h * factor)), Image.LANCZOS)
+            output_frames.append(img)
+            pbar.update(1)
  
-        if stop:
-            print(Fore.YELLOW + Style.NORMAL + "\nGif creation interrupted by user." + Fore.RESET + Style.RESET_ALL)
-            pbar.disable = True
-            done = False
-            break
+            if stop:
+                print(Fore.YELLOW + Style.NORMAL + "\nGif creation interrupted by user." + Fore.RESET + Style.RESET_ALL)
+                pbar.disable = True
+                done = False
+                break
  
-    pbar.close()
-    listener.stop()
+        pbar.close()
+        listener.stop()
+        
+        if done == True:
+            print("\nSAVING YOUR GIF...")
+            #print("DURATION: ",1000 // video_fps)
+            if args.speed:
+                duration = 1000 / (video_fps * (args.speed / 100))
+            else:
+                duration = 1000 / video_fps
  
-    if done == True:
-        print("\nSAVING YOUR GIF...")
-        #print("DURATION: ",1000 // video_fps)
-        if args.speed:
-            duration = 1000 / (video_fps * (args.speed / 100))
-        else:
-            duration = 1000 / video_fps
+            output_frames[0].save(args.destination,save_all=True,append_images=output_frames[1:],
+                              optimize=False, duration = duration, loop=0)
  
-        output_frames[0].save(args.destination,save_all=True,append_images=output_frames[1:],
-                          optimize=False, duration = duration, loop=0)
- 
-        size = get_size_format(os.stat(args.destination).st_size)
-        print(f"Created gif '{args.destination}' with size '{size}' from '{args.source}'.")
+            size = get_size_format(os.stat(args.destination).st_size)
+            print(f"Created gif '{args.destination}' with size '{size}' from '{args.source}'.")
+
+    except Exception as e:
+        if pbar:
+            pbar.close()
+        if listener:
+            listener.stop()
+        done = False
+        error = str(e)
+        print(Fore.RED + Style.BRIGHT + f"\nUNEXPECTED ERROR: {error}" + Fore.RESET + Style.RESET_ALL)
  
  
 def read_video(args):
     global done, frame_list, width, height, num_frames, video_fps, total_frames
+    pbar = None
+    listener = None
     try:
         listener = keyboard.Listener(on_press=on_press)
         listener.start()
@@ -136,11 +152,13 @@ def read_video(args):
         else:
             print(Fore.RED+Style.BRIGHT+"Invalid index for initial or final frame."+Fore.RESET+Style.RESET_ALL)
             #stop = True
-            #done = False
+            done = False
  
     except Exception as e:
-        pbar.close()
-        listener.stop()
+        if pbar:
+            pbar.close()
+        if listener:
+            listener.stop()
         done = False
         error = str(e)
         print(Fore.RED + Style.DIM + f"\nUNEXPECTED ERROR: {error}" + Fore.RESET + Style.RESET_ALL)
@@ -193,7 +211,8 @@ def show(f):
         pyglet.app.run()
         print(f"Successfully generated view from '{f}'.")
     except Exception as e:
-        print("UNEXPECTED ERROR: ",str(e))
+        error = str(e)
+        print(Fore.RED+Style.BRIGHT+f"UNEXPECTED ERROR: {error}"+Fore.RESET+Style.RESET_ALL)
  
 def check_positive(v):
     ivalue = float(v)
@@ -247,7 +266,7 @@ def main():
         read_video(args)
         #print("STOPPED: ",stop)
         #print("NUMBER OF FRAMES: ",len(frame_list))
-        if not stop:
+        if not stop and done:
             create_gif(args,frame_list,width,height,num_frames,video_fps)
             #print("ok")
  
