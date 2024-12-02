@@ -47,7 +47,6 @@ def create_gif(args,frame_list,w,h,num_frames,video_fps):
     pbar = None
 
     try:
-        print(hhddh)
         listener = keyboard.Listener(on_press=on_press)
         listener.start()
  
