@@ -240,7 +240,7 @@ def main():
     parser.add_argument('-spd', '--speed', default=100, type=check_positive, help='Speed of the gif as a percentage of the original (100 by default)')
     parser.add_argument('-shw','--show',action='store_true',help='Show result file')
     parser.add_argument('-from','--from_frame',default=0,type=check_positive, help='Starting frame')
-    parser.add_argument('-to','--to_frame',default=None,help='Ending frame')
+    parser.add_argument('-to','--to_frame',default=None,type=check_positive,help='Ending frame')
  
     args = parser.parse_args()
     name, file_extension = os.path.splitext(args.source)
