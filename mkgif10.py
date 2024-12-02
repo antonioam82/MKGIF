@@ -48,7 +48,7 @@ def create_gif(args,frame_list,w,h,num_frames,video_fps):
  
     print("\nCREATING YOUR GIF...(PRESS SPACE BAR TO CANCEL)")
  
-    pbar = tqdm(total=int(num_frames), unit='frames', ncols=100)
+    pbar = tqdm(total=total_frames, unit='frames', ncols=100) ##############
     factor = args.size/100
  
     for frame in frame_list:
@@ -82,7 +82,7 @@ def create_gif(args,frame_list,w,h,num_frames,video_fps):
  
  
 def read_video(args):
-    global done, frame_list, width, height, num_frames, video_fps
+    global done, frame_list, width, height, num_frames, video_fps, total_frames
     try:
         listener = keyboard.Listener(on_press=on_press)
         listener.start()
@@ -94,30 +94,49 @@ def read_video(args):
         height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
         video_fps = cap.get(cv2.CAP_PROP_FPS)#
         duration = num_frames / video_fps #################################
+
+        initial_frame = args.from_frame
+        if args.to_frame:
+            final_frame = int(args.to_frame)
+        else:
+            final_frame = int(num_frames)
+
+        
+        if (initial_frame >= 0 and initial_frame <= num_frames) and (final_frame > 0 and final_frame <= num_frames) and (initial_frame < final_frame):
+            cap.set(cv2.CAP_PROP_POS_FRAMES,initial_frame)###########################
+            total_frames = abs(num_frames - initial_frame) - abs(final_frame - num_frames)
+            print(f'NUMBER OF FRAMES: {total_frames} | WIDTH: {width} | HEIGHT: {height} | FRAME RATE: {video_fps} | DURATION: {duration}\n')
  
-        print(f'NUMBER OF FRAMES: {num_frames} | WIDTH: {width} | HEIGHT: {height} | FRAME RATE: {video_fps} | DURATION: {duration}\n')
+            print("PROCESSING...(PRESS SPACE BAR TO CANCEL)")
  
-        print("PROCESSING...(PRESS SPACE BAR TO CANCEL)")
+            pbar = tqdm(total=int(total_frames), unit='frames', ncols=100)
+            ret = True
  
-        pbar = tqdm(total=int(num_frames), unit='frames', ncols=100)
-        ret = True
+            while ret:
+                ret, frame = cap.read()
+                if ret:
+                    frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                    frame_list.append(frame)
+                    pbar.update(1)
+                
+                if args.to_frame:
+                    current_frame = int(cap.get(cv2.CAP_PROP_POS_FRAMES))
+                    if current_frame >= final_frame:
+                        break
  
-        while ret:
-            ret, frame = cap.read()
-            if ret:
-                frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-                frame_list.append(frame)
-                pbar.update(1)
- 
-            if stop:
-                print(Fore.YELLOW + Style.NORMAL + "\nFrame processing interrupted by user." + Fore.RESET + Style.RESET_ALL)
-                pbar.disable = True
-                done = False
-                break
- 
-        cap.release()
-        pbar.close()
-        listener.stop()
+                if stop:
+                    print(Fore.YELLOW + Style.NORMAL + "\nFrame processing interrupted by user." + Fore.RESET + Style.RESET_ALL)
+                    pbar.disable = True
+                    done = False
+                    break
+                
+            cap.release()
+            pbar.close()
+            listener.stop()
+        else:
+            print(Fore.RED+Style.BRIGHT+"Invalid index for initial or final frame."+Fore.RESET+Style.RESET_ALL)
+            #stop = True
+            #done = False
  
     except Exception as e:
         pbar.close()
@@ -201,8 +220,8 @@ def main():
     parser.add_argument('-fps','--frames_per_second',default=None,type=check_positive,help='Duration of the gif')
     parser.add_argument('-spd', '--speed', default=100, type=check_positive, help='Speed of the gif as a percentage of the original (100 by default)')
     parser.add_argument('-shw','--show',action='store_true',help='Show result file')
-    parser.add_argument('-st','--start',default=0.0,type=check_positive, help='Start second')
-    parser.add_argument('-nd','--end',default=None,help='End second')
+    parser.add_argument('-from','--from_frame',default=0,type=check_positive, help='Starting frame')
+    parser.add_argument('-to','--to_frame',default=None,help='Ending frame')
  
     args = parser.parse_args()
     name, file_extension = os.path.splitext(args.source)
