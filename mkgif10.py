@@ -119,7 +119,7 @@ def read_video(args):
         
         if (initial_frame >= 0 and initial_frame <= num_frames) and (final_frame > 0 and final_frame <= num_frames) and (initial_frame < final_frame):
             cap.set(cv2.CAP_PROP_POS_FRAMES,initial_frame)###########################
-            total_frames = abs(num_frames - initial_frame) - abs(final_frame - num_frames)
+            total_frames = abs(num_frames - initial_frame) - abs(final_frame - num_frames)#########
             print(f'NUMBER OF FRAMES: {total_frames} | WIDTH: {width} | HEIGHT: {height} | FRAME RATE: {video_fps} | DURATION: {duration}\n')
  
             print("PROCESSING...(PRESS SPACE BAR TO CANCEL)")
@@ -218,6 +218,12 @@ def check_positive(v):
     if ivalue <= 0:
         raise argparse.ArgumentTypeError(Fore.RED+Style.BRIGHT+f"speed and size values must be positive ('{v}' is not valid)."+Fore.RESET+Style.RESET_ALL)
     return ivalue
+
+def check_initial(v):
+    ivalue = int(v)
+    if ivalue < 0:
+        raise argparse.ArgumentTypeError(Fore.RED+Style.BRIGHT+f"initial frame position must be greater or equal to 0 ('{v}' is not valid)."+Fore.RESET+Style.RESET_ALL)
+    return ivalue
  
 def get_size_format(b, factor=1024, suffix="B"):
     for unit in ["","K","M","G","T","P","E","Z"]:
@@ -238,7 +244,7 @@ def main():
     parser.add_argument('-fps','--frames_per_second',default=None,type=check_positive,help='Duration of the gif')
     parser.add_argument('-spd', '--speed', default=100, type=check_positive, help='Speed of the gif as a percentage of the original (100 by default)')
     parser.add_argument('-shw','--show',action='store_true',help='Show result file')
-    parser.add_argument('-from','--from_frame',default=0,type=check_positive, help='Starting frame')
+    parser.add_argument('-from','--from_frame',default=0,type=check_initial, help='Starting frame')
     parser.add_argument('-to','--to_frame',default=None,type=check_positive,help='Ending frame')
  
     args = parser.parse_args()
