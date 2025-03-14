@@ -207,6 +207,12 @@ def show(f):
         @window.event
         def on_draw():
             sprite.draw()
+
+        #CERRAR VENTANA AL PRESIONAR 'ESC'
+        @window.event
+        def on_key_press(symbol, modifiers):
+            if symbol == key.ESCAPE:
+                window.close()
  
         pyglet.app.run()
         print(f"Successfully generated view from '{f}'.")
