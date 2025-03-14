@@ -192,7 +192,7 @@ def convert_to_gif(args):
         print(Fore.RED + Style.DIM + f"\nUNEXPECTED ERROR: {error}" + Fore.RESET + Style.RESET_ALL)
  
 def show(f):
-    print("GENERATING VIEW...")
+    print("GENERATING VIEW -PRESS 'ESC' TO CLOSE DE WINDOW-")
     try:
         from pyglet.window import key ######################################################################################
         with Image.open(f) as img:
