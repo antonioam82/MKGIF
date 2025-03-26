@@ -45,7 +45,7 @@ def create_gif(args,frame_list,w,h,num_frames,video_fps):
     output_frames = []
     listener = None
     pbar = None
-
+ 
     try:
         listener = keyboard.Listener(on_press=on_press)
         listener.start()
@@ -69,7 +69,7 @@ def create_gif(args,frame_list,w,h,num_frames,video_fps):
  
         pbar.close()
         listener.stop()
-        
+ 
         if done == True:
             print("\nSAVING YOUR GIF...")
             #print("DURATION: ",1000 // video_fps)
@@ -83,7 +83,7 @@ def create_gif(args,frame_list,w,h,num_frames,video_fps):
  
             size = get_size_format(os.stat(args.destination).st_size)
             print(f"Created gif '{args.destination}' with size '{size}' from '{args.source}'.")
-
+ 
     except Exception as e:
         if pbar:
             pbar.close()
@@ -103,20 +103,20 @@ def read_video(args):
         listener.start()
         print(c_index+b_index+pyfiglet.figlet_format('MKGIF',font='graffiti')+Fore.RESET+Style.RESET_ALL)
         cap = cv2.VideoCapture(args.source)
-
+ 
         num_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
         width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
         height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
         video_fps = cap.get(cv2.CAP_PROP_FPS)#
         duration = num_frames / video_fps #################################
-
+ 
         initial_frame = args.from_frame
         if args.to_frame:
             final_frame = int(args.to_frame)
         else:
             final_frame = int(num_frames)
-
-        
+ 
+ 
         if (initial_frame >= 0 and initial_frame <= num_frames) and (final_frame > 0 and final_frame <= num_frames) and (initial_frame < final_frame):
             cap.set(cv2.CAP_PROP_POS_FRAMES,initial_frame)###########################
             total_frames = abs(num_frames - initial_frame) - abs(final_frame - num_frames)#########
@@ -134,7 +134,7 @@ def read_video(args):
                     frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
                     frame_list.append(frame)
                     pbar.update(1)
-                
+ 
                 if args.to_frame:
                     current_frame = int(cap.get(cv2.CAP_PROP_POS_FRAMES))
                     if current_frame >= final_frame:
@@ -145,7 +145,7 @@ def read_video(args):
                     pbar.disable = True
                     done = False
                     break
-                
+ 
             cap.release()
             pbar.close()
             listener.stop()
@@ -207,7 +207,7 @@ def show(f):
         @window.event
         def on_draw():
             sprite.draw()
-
+ 
         #CERRAR VENTANA AL PRESIONAR 'ESC'
         @window.event
         def on_key_press(symbol, modifiers):
@@ -225,7 +225,7 @@ def check_positive(v):
     if ivalue <= 0:
         raise argparse.ArgumentTypeError(Fore.RED+Style.BRIGHT+f"speed and size values must be positive ('{v}' is not valid)."+Fore.RESET+Style.RESET_ALL)
     return ivalue
-
+ 
 def check_initial(v):
     ivalue = int(v)
     if ivalue < 0:
@@ -270,8 +270,8 @@ def main():
                 args.destination = f"{hash_name}{speed}{size}.gif"
  
     if file_extension == '.webp':
-        if args.size != 100:
-            parser.error(Fore.RED+Style.BRIGHT+"-sz/--size spec is not allowed for '.webp' to '.gif' conversion."+Fore.RESET+Style.RESET_ALL)
+        if args.size != 100 or args.speed != 100 or args.frames_per_second or args.to_frame or args.from_frame != 0:
+            parser.error(Fore.RED+Style.BRIGHT+"size, speed, fps and from/to frames specs is not allowed for '.webp' to '.gif' conversion."+Fore.RESET+Style.RESET_ALL)
         else:
             convert_to_gif(args)
     else:
