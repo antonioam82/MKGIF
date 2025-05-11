@@ -68,7 +68,7 @@ def create_gif(args,frame_list,w,h,num_frames,video_fps):
                 break
  
         pbar.close()
-        listener.stop()
+        listener.stop() ############
         
         if done == True:
             print("\nSAVING YOUR GIF...")
@@ -87,12 +87,14 @@ def create_gif(args,frame_list,w,h,num_frames,video_fps):
     except Exception as e:
         if pbar:
             pbar.close()
-        if listener:
+        if listener and listener.is_alive():
             listener.stop()
         done = False
         error = str(e)
         print(Fore.RED + Style.BRIGHT + f"\nUNEXPECTED ERROR: {error}" + Fore.RESET + Style.RESET_ALL)
- 
+    #print("ALL DONE!")
+    '''if listener and not listener.is_alive():
+        print("Listener has been successfully closed.")'''
  
 def read_video(args):
     global done, frame_list, width, height, num_frames, video_fps, total_frames
