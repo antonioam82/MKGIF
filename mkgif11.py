@@ -48,14 +48,15 @@ def check_result_ext(file):
         )
     return file
 
+
 def check_source_ext(file):
-    supported_formats = ['.mp4', '.avi', '.mov', '.wmv', '.rm', '.webp']
+    supported_formats = ['.mp4', '.avi', '.mov', '.wmv', '.rm', '.webp', '.gif']
     name, ex = os.path.splitext(file)
     if os.path.exists(file):
         if ex not in supported_formats:
             raise argparse.ArgumentTypeError(
                 Fore.RED + Style.BRIGHT +
-                f"Source file must be '.mp4', '.avi', '.mov', '.wmv', '.rm' or '.webp' ('{ex}' is not valid)." +
+                f"Source file must be '.mp4', '.avi', '.mov', '.wmv', '.rm', '.gif' or '.webp' ('{ex}' is not valid)." +
                 Fore.RESET + Style.RESET_ALL
             )
     else:
@@ -65,6 +66,7 @@ def check_source_ext(file):
             Fore.RESET + Style.RESET_ALL
         )
     return file
+
 
 def frame_generator(cap: cv2.VideoCapture, final_frame: int, state: AppState) -> Generator:
     """Yield frames one by one instead of loading all into memory."""
@@ -234,15 +236,77 @@ def calculate_sha1(file_path: str) -> str:
 
 
 def convert_to_gif(args, state: AppState) -> None:
+    """
+    Extract all frames from a .webp animation into state.frame_list so they
+    can be processed by the shared create_gif() pipeline (resize, speed, optimize…).
+    Falls back to a direct save when the webp has only one frame.
+    """
+    listener = None
+    pbar = None
     try:
         print(c_index + b_index + pyfiglet.figlet_format('MKGIF', font='graffiti') + Fore.RESET + Style.RESET_ALL)
-        print("CONVERTING WEBP TO GIF...")
-        file = Image.open(args.source)
-        file.save(args.destination, 'gif', save_all=True, background=0)
-        file.close()
-        size = get_size_format(os.stat(args.destination).st_size)
-        print(f"Created '{args.destination}' with size {size} from '{args.source}'.")
+        print("READING WEBP FRAMES...(PRESS SPACE BAR TO CANCEL)")
+
+        listener = keyboard.Listener(on_press=lambda key: on_press(key, state))
+        listener.start()
+
+        webp = Image.open(args.source)
+
+        n_frames = getattr(webp, 'n_frames', 1)
+
+        initial_frame = args.from_frame
+        final_frame   = int(args.to_frame) if args.to_frame else n_frames
+
+        valid_range = (
+            0 <= initial_frame < n_frames and
+            0 < final_frame <= n_frames and
+            initial_frame < final_frame
+        )
+        if not valid_range:
+            print(Fore.RED + Style.BRIGHT + "Invalid index for initial or final frame." + Fore.RESET + Style.RESET_ALL)
+            state.done = False
+            webp.close()
+            return
+
+        state.width       = webp.width
+        state.height      = webp.height
+        state.num_frames  = n_frames
+        state.total_frames = final_frame - initial_frame
+
+        frame_duration_ms = webp.info.get('duration', 100)   # ms por frame
+        state.video_fps   = 1000 / frame_duration_ms if frame_duration_ms > 0 else 10.0
+
+        duration_s = state.total_frames / state.video_fps
+        print("SOURCE WEBP DATA:")
+        print(
+            f'NUMBER OF FRAMES: {n_frames} | '
+            f'WIDTH: {state.width} | HEIGHT: {state.height} | '
+            f'FRAME RATE: {state.video_fps:.2f} | DURATION: {duration_s:.2f}s\n'
+        )
+
+        pbar = tqdm(total=state.total_frames, unit='frames', ncols=100)
+
+        for i in range(initial_frame, final_frame):
+            if state.stop:
+                print(Fore.YELLOW + Style.NORMAL + "\nFrame processing interrupted by user." + Fore.RESET + Style.RESET_ALL)
+                pbar.disable = True
+                state.done = False
+                break
+            webp.seek(i)
+            # Convertir a RGBA → RGB para que PIL pueda guardar como GIF
+            frame_rgba = webp.convert('RGBA')
+            state.frame_list.append(np.array(frame_rgba.convert('RGB')))
+            pbar.update(1)
+
+        pbar.close()
+        listener.stop()
+        webp.close()
+
     except Exception as e:
+        if pbar:
+            pbar.close()
+        if listener and listener.is_alive():
+            listener.stop()
         state.done = False
         print(Fore.RED + Style.DIM + f"\nUNEXPECTED ERROR: {e}" + Fore.RESET + Style.RESET_ALL)
 
@@ -314,16 +378,16 @@ def main():
         allow_abbrev=False
     )
 
-    parser.add_argument('-src',    '--source',         required=True,       type=check_source_ext, help='Source file name')
-    parser.add_argument('-dest',   '--destination',    default=None,        type=check_result_ext, help='Destination file name')
-    parser.add_argument('-sz',     '--size',           default=100,         type=check_positive,   help='Relative size of the gif (100 by default)')
-    parser.add_argument('-delsrc', '--delete_source',  action='store_true',                        help='Generate gif and remove source file')
-    parser.add_argument('-fps',    '--frames_per_second', default=None,     type=check_positive,   help='Duration of the gif')
-    parser.add_argument('-spd',    '--speed',          default=100,         type=check_positive,   help='Speed of the gif as a percentage of the original (100 by default)')
-    parser.add_argument('-shw',    '--show',           action='store_true',                        help='Show result file')
-    parser.add_argument('-from',   '--from_frame',     default=0,           type=check_initial,    help='Starting frame')
-    parser.add_argument('-to',     '--to_frame',       default=None,        type=check_positive,   help='Ending frame')
-    parser.add_argument('-opt',    '--optimize',       action='store_true',                        help='Optimize gif file size (slower save)')
+    parser.add_argument('-src','--source',required=True,type=check_source_ext,help='Source file name')
+    parser.add_argument('-dest','--destination',default=None,type=check_result_ext,help='Destination file name')
+    parser.add_argument('-sz','--size',default=100,type=check_positive,help='Relative size of the gif (100 by default)')
+    parser.add_argument('-delsrc','--delete_source',action='store_true',help='Generate gif and remove source file')
+    parser.add_argument('-fps','--frames_per_second',default=None,type=check_positive,help='Duration of the gif')
+    parser.add_argument('-spd','--speed',default=100,type=check_positive,help='Speed of the gif as a percentage of the original (100 by default)')
+    parser.add_argument('-shw','--show',action='store_true',help='Show result file')
+    parser.add_argument('-from','--from_frame',default=0,type=check_initial,help='Starting frame')
+    parser.add_argument('-to','--to_frame',default=None,type=check_positive,   help='Ending frame')
+    parser.add_argument('-opt','--optimize',action='store_true',help='Optimize gif file size (slower save)')
 
     args = parser.parse_args()
 
@@ -341,18 +405,12 @@ def main():
             args.destination = f"{hash_name}{speed}{size}.gif"
 
     if file_extension == '.webp':
-        if args.size != 100 or args.speed != 100 or args.frames_per_second or args.to_frame or args.from_frame != 0:
-            parser.error(
-                Fore.RED + Style.BRIGHT +
-                "size, speed, fps and from/to frames specs is not allowed for '.webp' to '.gif' conversion." +
-                Fore.RESET + Style.RESET_ALL
-            )
-        else:
-            convert_to_gif(args, state)
+        convert_to_gif(args, state)
     else:
         read_video(args, state)
-        if not state.stop and state.done:
-            create_gif(args, state)
+
+    if not state.stop and state.done:
+        create_gif(args, state)
 
     if args.delete_source:
         os.remove(args.source)
