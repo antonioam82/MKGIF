@@ -50,13 +50,13 @@ def check_result_ext(file):
 
 
 def check_source_ext(file):
-    supported_formats = ['.mp4', '.avi', '.mov', '.wmv', '.rm', '.webp', '.gif']
+    supported_formats = ['.mp4', '.avi', '.mov', '.wmv', '.rm', '.webp', '.gif', '.gifv']
     name, ex = os.path.splitext(file)
     if os.path.exists(file):
         if ex not in supported_formats:
             raise argparse.ArgumentTypeError(
                 Fore.RED + Style.BRIGHT +
-                f"Source file must be '.mp4', '.avi', '.mov', '.wmv', '.rm', '.gif' or '.webp' ('{ex}' is not valid)." +
+                f"Source file must be '.mp4', '.avi', '.mov', '.wmv', '.rm', '.gif', '.gifv' or '.webp' ('{ex}' is not valid)." +
                 Fore.RESET + Style.RESET_ALL
             )
     else:
