@@ -50,13 +50,13 @@ def check_result_ext(file):
 
 
 def check_source_ext(file):
-    supported_formats = ['.mp4', '.avi', '.mov', '.wmv', '.rm', '.webp', '.gif', '.gifv']
+    supported_formats = ['.mp4', '.avi', '.mov', '.wmv', '.rm', '.webp', '.gif']
     name, ex = os.path.splitext(file)
     if os.path.exists(file):
         if ex not in supported_formats:
             raise argparse.ArgumentTypeError(
                 Fore.RED + Style.BRIGHT +
-                f"Source file must be '.mp4', '.avi', '.mov', '.wmv', '.rm', '.gif', '.gifv' or '.webp' ('{ex}' is not valid)." +
+                f"Source file must be '.mp4', '.avi', '.mov', '.wmv', '.rm', '.gif' or '.webp' ('{ex}' is not valid)." +
                 Fore.RESET + Style.RESET_ALL
             )
     else:
@@ -188,7 +188,7 @@ def read_video(args, state: AppState) -> None:
         print(
             f'NUMBER OF FRAMES: {state.num_frames} | '
             f'WIDTH: {state.width} | HEIGHT: {state.height} | '
-            f'FRAME RATE: {state.video_fps} | DURATION: {duration}\n'
+            f'FRAME RATE: {state.video_fps} | DURATION: {duration:.2f}s\n'
         )
         print("PROCESSING...(PRESS SPACE BAR TO CANCEL)")
 
@@ -422,3 +422,7 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+
+
+
