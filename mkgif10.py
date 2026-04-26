@@ -31,11 +31,11 @@ def check_result_ext(file):
     return file
  
 def check_source_ext(file):
-    supported_formats = ['.mp4','.avi','.mov','.wmv','.rm','.webp']
+    supported_formats = ['.mp4','.avi','.mov','.wmv','.rm','.webp','.gif']
     name, ex = os.path.splitext(file)
     if os.path.exists(file):
         if ex not in supported_formats:
-            raise argparse.ArgumentTypeError(Fore.RED+Style.BRIGHT+f"Source file must be '.mp4', '.avi', '.mov', '.wmv', '.rm' or '.webp' ('{ex}' is not valid)."+Fore.RESET+Style.RESET_ALL)
+            raise argparse.ArgumentTypeError(Fore.RED+Style.BRIGHT+f"Source file must be '.mp4', '.avi', '.mov', '.wmv', '.rm', '.gif' or '.webp' ('{ex}' is not valid)."+Fore.RESET+Style.RESET_ALL)
     else:
         raise argparse.ArgumentTypeError(Fore.RED+Style.BRIGHT+f"FILE NOT FOUND: File '{file}' not found."+Fore.RESET+Style.RESET_ALL)
     return file
@@ -68,7 +68,7 @@ def create_gif(args,frame_list,w,h,num_frames,video_fps):
                 break
  
         pbar.close()
-        listener.stop() ############
+        listener.stop()
         
         if done == True:
             print("\nSAVING YOUR GIF...")
@@ -87,14 +87,12 @@ def create_gif(args,frame_list,w,h,num_frames,video_fps):
     except Exception as e:
         if pbar:
             pbar.close()
-        if listener and listener.is_alive():
+        if listener:
             listener.stop()
         done = False
         error = str(e)
         print(Fore.RED + Style.BRIGHT + f"\nUNEXPECTED ERROR: {error}" + Fore.RESET + Style.RESET_ALL)
-    #print("ALL DONE!")
-    '''if listener and not listener.is_alive():
-        print("Listener has been successfully closed.")'''
+ 
  
 def read_video(args):
     global done, frame_list, width, height, num_frames, video_fps, total_frames
@@ -242,7 +240,7 @@ def get_size_format(b, factor=1024, suffix="B"):
     return f"{b:.4f}Y{suffix}"
  
 def main():
-    parser = argparse.ArgumentParser(prog="MKGIF 3.2", conflict_handler='resolve',
+    parser = argparse.ArgumentParser(prog="mkgif10.py", conflict_handler='resolve',
                                      description="Create gifs from videos in command line or convert '.webp' files into '.gif'.",
                                      epilog = "REPO: https://github.com/antonioam82/MKGIF",allow_abbrev=False)
  
