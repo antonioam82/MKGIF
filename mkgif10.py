@@ -121,7 +121,7 @@ def read_video(args):
             cap.set(cv2.CAP_PROP_POS_FRAMES,initial_frame)###########################
             total_frames = abs(num_frames - initial_frame) - abs(final_frame - num_frames)#########
             print("SOURCE VIDEO DATA:")
-            print(f'NUMBER OF FRAMES: {num_frames} | WIDTH: {width} | HEIGHT: {height} | FRAME RATE: {video_fps} | DURATION: {duration}\n')
+            print(f'NUMBER OF FRAMES: {num_frames} | WIDTH: {width} | HEIGHT: {height} | FRAME RATE: {video_fps:.3f} | DURATION: {duration:.3f}\n')
  
             print("PROCESSING...(PRESS SPACE BAR TO CANCEL)")
  
