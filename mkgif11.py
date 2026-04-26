@@ -371,9 +371,9 @@ def get_size_format(b, factor=1024, suffix="B"):
 
 def main():
     parser = argparse.ArgumentParser(
-        prog="MKGIF 3.2",
+        prog="MKGIF 3.3",
         conflict_handler='resolve',
-        description="Create gifs from videos in command line or convert '.webp' files into '.gif'.",
+        description="Create gifs from various formats in command line.",
         epilog="REPO: https://github.com/antonioam82/MKGIF",
         allow_abbrev=False
     )
