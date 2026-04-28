@@ -11,7 +11,7 @@ import cv2
 from tqdm import tqdm
 import hashlib
 from pynput import keyboard
-from concurrent.futures import ThreadPoolExecutor
+#from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
 from typing import Optional, Generator
 import numpy as np
@@ -105,20 +105,19 @@ def create_gif(args, state: AppState) -> None:
         pbar = tqdm(total=state.total_frames, unit='frames', ncols=100)
         output_frames = []
 
-        with ThreadPoolExecutor() as executor:
-            futures = executor.map(resize_frame, state.frame_list)
-            for img in futures:
-                if state.stop or img is None:
-                    print(
-                        Fore.YELLOW + Style.NORMAL +
-                        "\nGif creation interrupted by user." +
-                        Fore.RESET + Style.RESET_ALL
-                    )
-                    pbar.disable = True
-                    state.done = False
-                    break
-                output_frames.append(img)
-                pbar.update(1)
+        #with ThreadPoolExecutor() as executor:
+            #futures = executor.map(resize_frame, state.frame_list)
+            #for img in futures:
+        for img in state.frame_list:
+            resized_frame = resize_frame(img)
+            if state.stop or img is None:
+                print(Fore.YELLOW + Style.NORMAL + "\nGif creation interrupted by user." + Fore.RESET + Style.RESET_ALL)
+                pbar.disable = True
+                state.done = False
+                break
+            #output_frames.append(img)
+            output_frames.append(resized_frame)
+            pbar.update(1)
 
         pbar.close()
         listener.stop()
@@ -293,7 +292,6 @@ def convert_to_gif(args, state: AppState) -> None:
                 state.done = False
                 break
             webp.seek(i)
-            # Convertir a RGBA → RGB para que PIL pueda guardar como GIF
             frame_rgba = webp.convert('RGBA')
             state.frame_list.append(np.array(frame_rgba.convert('RGB')))
             pbar.update(1)
@@ -371,7 +369,7 @@ def get_size_format(b, factor=1024, suffix="B"):
 
 def main():
     parser = argparse.ArgumentParser(
-        prog="MKGIF 3.3",
+        prog="mkgif11.py",
         conflict_handler='resolve',
         description="Create gifs from various formats in command line.",
         epilog="REPO: https://github.com/antonioam82/MKGIF",
