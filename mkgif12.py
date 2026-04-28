@@ -188,7 +188,7 @@ def read_video(args, state: AppState) -> None:
         print(
             f'NUMBER OF FRAMES: {state.num_frames} | '
             f'WIDTH: {state.width} | HEIGHT: {state.height} | '
-            f'FRAME RATE: {state.video_fps} | DURATION: {duration:.2f}s\n'
+            f'FRAME RATE: {state.video_fps:.2f} | DURATION: {duration:.2f}s\n'
         )
         print("PROCESSING...(PRESS SPACE BAR TO CANCEL)")
 
