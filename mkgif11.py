@@ -156,7 +156,7 @@ def read_video(args, state: AppState) -> None:
         listener = keyboard.Listener(on_press=lambda key: on_press(key, state))
         listener.start()
 
-        print(c_index + b_index + pyfiglet.figlet_format('MKGIF', font='graffiti') + Fore.RESET + Style.RESET_ALL)
+        #print(c_index + b_index + pyfiglet.figlet_format('MKGIF', font='graffiti') + Fore.RESET + Style.RESET_ALL)
 
         cap = cv2.VideoCapture(args.source)
         state.num_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
@@ -175,15 +175,18 @@ def read_video(args, state: AppState) -> None:
         )
 
         if not valid_range:
-            print(Fore.RED + Style.BRIGHT + "Invalid index for initial or final frame." + Fore.RESET + Style.RESET_ALL)
+            print(Fore.RED + Style.BRIGHT + "FRAME INDEX ERROR: Invalid index for initial or final frame.")
+            print(f"Index value must be in range (0,{state.num_frames})." + Fore.RESET + Style.RESET_ALL)
             state.done = False
             cap.release()
             return
 
+        print(c_index + b_index + pyfiglet.figlet_format('MKGIF', font='graffiti') + Fore.RESET + Style.RESET_ALL)#######################
+
         cap.set(cv2.CAP_PROP_POS_FRAMES, initial_frame)
         state.total_frames = abs(state.num_frames - initial_frame) - abs(final_frame - state.num_frames)
 
-        print("SOURCE VIDEO DATA:")
+        print("SOURCE VIDEO/GIF DATA:")
         print(
             f'NUMBER OF FRAMES: {state.num_frames} | '
             f'WIDTH: {state.width} | HEIGHT: {state.height} | '
@@ -243,8 +246,8 @@ def convert_to_gif(args, state: AppState) -> None:
     listener = None
     pbar = None
     try:
-        print(c_index + b_index + pyfiglet.figlet_format('MKGIF', font='graffiti') + Fore.RESET + Style.RESET_ALL)
-        print("READING WEBP FRAMES...(PRESS SPACE BAR TO CANCEL)")
+        #print(c_index + b_index + pyfiglet.figlet_format('MKGIF', font='graffiti') + Fore.RESET + Style.RESET_ALL)
+        #print("READING WEBP FRAMES...(PRESS SPACE BAR TO CANCEL)")
 
         listener = keyboard.Listener(on_press=lambda key: on_press(key, state))
         listener.start()
@@ -262,11 +265,14 @@ def convert_to_gif(args, state: AppState) -> None:
             initial_frame < final_frame
         )
         if not valid_range:
-            print(Fore.RED + Style.BRIGHT + "Invalid index for initial or final frame." + Fore.RESET + Style.RESET_ALL)
+            print(Fore.RED + Style.BRIGHT + "FRAME INDEX ERROR: Invalid index for initial or final frame.")
+            print(f"Index value must be in range (0,{n_frames})." + Fore.RESET + Style.RESET_ALL)
             state.done = False
             webp.close()
             return
 
+        print(c_index + b_index + pyfiglet.figlet_format('MKGIF', font='graffiti') + Fore.RESET + Style.RESET_ALL) ###############
+        
         state.width       = webp.width
         state.height      = webp.height
         state.num_frames  = n_frames
@@ -348,12 +354,12 @@ def check_positive(v):
     return ivalue
 
 
-def check_initial(v):
+def check_index(v):
     ivalue = int(v)
     if ivalue < 0:
         raise argparse.ArgumentTypeError(
             Fore.RED + Style.BRIGHT +
-            f"initial frame position must be greater or equal to 0 ('{v}' is not valid)." +
+            f"initial/final frame position must be greater or equal to 0 ('{v}' is not valid)." +
             Fore.RESET + Style.RESET_ALL
         )
     return ivalue
@@ -383,8 +389,8 @@ def main():
     parser.add_argument('-fps','--frames_per_second',default=None,type=check_positive,help='Duration of the gif')
     parser.add_argument('-spd','--speed',default=100,type=check_positive,help='Speed of the gif as a percentage of the original (100 by default)')
     parser.add_argument('-shw','--show',action='store_true',help='Show result file')
-    parser.add_argument('-from','--from_frame',default=0,type=check_initial,help='Starting frame')
-    parser.add_argument('-to','--to_frame',default=None,type=check_positive,   help='Ending frame')
+    parser.add_argument('-from','--from_frame',default=0,type=check_index,help='Starting frame')
+    parser.add_argument('-to','--to_frame',default=None,type=check_index,   help='Ending frame')
     parser.add_argument('-opt','--optimize',action='store_true',help='Optimize gif file size (slower save)')
 
     args = parser.parse_args()
