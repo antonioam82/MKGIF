@@ -121,7 +121,7 @@ def read_video(args):
             cap.set(cv2.CAP_PROP_POS_FRAMES,initial_frame)###########################
             total_frames = abs(num_frames - initial_frame) - abs(final_frame - num_frames)#########
             print("SOURCE VIDEO DATA:")
-            print(f'NUMBER OF FRAMES: {num_frames} | WIDTH: {width} | HEIGHT: {height} | FRAME RATE: {video_fps:.3f} | DURATION: {duration:.3f}\n')
+            print(f'NUMBER OF FRAMES: {num_frames} | WIDTH: {width} | HEIGHT: {height} | FRAME RATE: {video_fps} | DURATION: {duration}\n')
  
             print("PROCESSING...(PRESS SPACE BAR TO CANCEL)")
  
@@ -223,13 +223,13 @@ def show(f):
 def check_positive(v):
     ivalue = float(v)
     if ivalue <= 0:
-        raise argparse.ArgumentTypeError(Fore.RED+Style.BRIGHT+f"speed and size values must be positive ('{v}' is not valid)."+Fore.RESET+Style.RESET_ALL)
+        raise argparse.ArgumentTypeError(Fore.RED+Style.BRIGHT+f"Frame rate, speed and size values must be greater than 0 ('{v}' is not valid)."+Fore.RESET+Style.RESET_ALL)
     return ivalue
 
 def check_initial(v):
     ivalue = int(v)
     if ivalue < 0:
-        raise argparse.ArgumentTypeError(Fore.RED+Style.BRIGHT+f"initial frame position must be greater or equal to 0 ('{v}' is not valid)."+Fore.RESET+Style.RESET_ALL)
+        raise argparse.ArgumentTypeError(Fore.RED+Style.BRIGHT+f"initial/final frame position must be greater or equal to 0 ('{v}' is not valid)."+Fore.RESET+Style.RESET_ALL)
     return ivalue
  
 def get_size_format(b, factor=1024, suffix="B"):
@@ -248,11 +248,11 @@ def main():
     parser.add_argument('-dest','--destination',type=check_result_ext,default=None,help="Destination file name")
     parser.add_argument('-sz','--size',default=100,type=check_positive,help='Relative size of the gif (100 by default)')
     parser.add_argument('-delsrc','--delete_source',action='store_true',help='Generate gif and remove source file')
-    parser.add_argument('-fps','--frames_per_second',default=None,type=check_positive,help='Duration of the gif')
+    parser.add_argument('-fps','--frames_per_second',default=None,type=check_positive,help='Frame rate')
     parser.add_argument('-spd', '--speed', default=100, type=check_positive, help='Speed of the gif as a percentage of the original (100 by default)')
     parser.add_argument('-shw','--show',action='store_true',help='Show result file')
     parser.add_argument('-from','--from_frame',default=0,type=check_initial, help='Starting frame')
-    parser.add_argument('-to','--to_frame',default=None,type=check_positive,help='Ending frame')
+    parser.add_argument('-to','--to_frame',default=None,type=check_initial,help='Ending frame')
  
     args = parser.parse_args()
     name, file_extension = os.path.splitext(args.source)
