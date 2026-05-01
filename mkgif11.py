@@ -348,7 +348,7 @@ def check_positive(v):
     if ivalue <= 0:
         raise argparse.ArgumentTypeError(
             Fore.RED + Style.BRIGHT +
-            f"speed and size values must be positive ('{v}' is not valid)." +
+            f"Frame rate, speed and size values must be greater than 0 ('{v}' is not valid)." +
             Fore.RESET + Style.RESET_ALL
         )
     return ivalue
@@ -386,7 +386,7 @@ def main():
     parser.add_argument('-dest','--destination',default=None,type=check_result_ext,help='Destination file name')
     parser.add_argument('-sz','--size',default=100,type=check_positive,help='Relative size of the gif (100 by default)')
     parser.add_argument('-delsrc','--delete_source',action='store_true',help='Generate gif and remove source file')
-    parser.add_argument('-fps','--frames_per_second',default=None,type=check_positive,help='Duration of the gif')
+    parser.add_argument('-fps','--frames_per_second',default=None,type=check_positive,help='Frame rate')
     parser.add_argument('-spd','--speed',default=100,type=check_positive,help='Speed of the gif as a percentage of the original (100 by default)')
     parser.add_argument('-shw','--show',action='store_true',help='Show result file')
     parser.add_argument('-from','--from_frame',default=0,type=check_index,help='Starting frame')
@@ -426,7 +426,6 @@ def main():
 
 if __name__ == '__main__':
     main()
-
 
 
 
