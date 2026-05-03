@@ -11,7 +11,6 @@ import cv2
 from tqdm import tqdm
 import hashlib
 from pynput import keyboard
-#from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
 from typing import Optional, Generator
 import numpy as np
@@ -81,7 +80,6 @@ def frame_generator(cap: cv2.VideoCapture, final_frame: int, state: AppState) ->
 
 
 def create_gif(args, state: AppState) -> None:
-    """Create GIF from frames stored in state, using parallel resizing."""
     listener = None
     pbar = None
 
@@ -104,10 +102,7 @@ def create_gif(args, state: AppState) -> None:
 
         pbar = tqdm(total=state.total_frames, unit='frames', ncols=100)
         output_frames = []
-
-        #with ThreadPoolExecutor() as executor:
-            #futures = executor.map(resize_frame, state.frame_list)
-            #for img in futures:
+        
         for img in state.frame_list:
             resized_frame = resize_frame(img)
             if state.stop or img is None:
@@ -115,7 +110,7 @@ def create_gif(args, state: AppState) -> None:
                 pbar.disable = True
                 state.done = False
                 break
-            #output_frames.append(img)
+            
             output_frames.append(resized_frame)
             pbar.update(1)
 
@@ -148,7 +143,6 @@ def create_gif(args, state: AppState) -> None:
 
 
 def read_video(args, state: AppState) -> None:
-    """Read video frames into state using a memory-efficient generator."""
     pbar = None
     listener = None
 
@@ -426,7 +420,6 @@ def main():
 
 if __name__ == '__main__':
     main()
-
 
 
 
