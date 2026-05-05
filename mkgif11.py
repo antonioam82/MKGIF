@@ -11,6 +11,7 @@ import cv2
 from tqdm import tqdm
 import hashlib
 from pynput import keyboard
+#from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
 from typing import Optional, Generator
 import numpy as np
@@ -102,7 +103,10 @@ def create_gif(args, state: AppState) -> None:
 
         pbar = tqdm(total=state.total_frames, unit='frames', ncols=100)
         output_frames = []
-        
+
+        #with ThreadPoolExecutor() as executor:
+            #futures = executor.map(resize_frame, state.frame_list)
+            #for img in futures:
         for img in state.frame_list:
             resized_frame = resize_frame(img)
             if state.stop or img is None:
@@ -110,7 +114,7 @@ def create_gif(args, state: AppState) -> None:
                 pbar.disable = True
                 state.done = False
                 break
-            
+            #output_frames.append(img)
             output_frames.append(resized_frame)
             pbar.update(1)
 
@@ -143,6 +147,7 @@ def create_gif(args, state: AppState) -> None:
 
 
 def read_video(args, state: AppState) -> None:
+    """Read video frames into state using a memory-efficient generator."""
     pbar = None
     listener = None
 
@@ -283,6 +288,7 @@ def convert_to_gif(args, state: AppState) -> None:
             f'FRAME RATE: {state.video_fps:.2f} | DURATION: {duration_s:.2f}s\n'
         )
 
+        print("READING WEBP FRAMES...(PRESS SPACE BAR TO CANCEL)")
         pbar = tqdm(total=state.total_frames, unit='frames', ncols=100)
 
         for i in range(initial_frame, final_frame):
@@ -420,6 +426,7 @@ def main():
 
 if __name__ == '__main__':
     main()
+
 
 
 
