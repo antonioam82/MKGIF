@@ -244,7 +244,6 @@ def convert_to_gif(args, state: AppState) -> None:
     pbar = None
     try:
         print(c_index + b_index + pyfiglet.figlet_format('MKGIF', font='graffiti') + Fore.RESET + Style.RESET_ALL)
-        print("READING WEBP FRAMES...(PRESS SPACE BAR TO CANCEL)")
 
         listener = keyboard.Listener(on_press=lambda key: on_press(key, state))
         listener.start()
@@ -282,6 +281,7 @@ def convert_to_gif(args, state: AppState) -> None:
             f'WIDTH: {state.width} | HEIGHT: {state.height} | '
             f'FRAME RATE: {state.video_fps:.2f} | DURATION: {duration_s:.2f}s\n'
         )
+        print("READING WEBP FRAMES...(PRESS SPACE BAR TO CANCEL)")
 
         pbar = tqdm(total=state.total_frames, unit='frames', ncols=100)
 
