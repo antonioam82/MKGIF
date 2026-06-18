@@ -157,7 +157,7 @@ def read_video(args, state: AppState) -> None:
         listener = keyboard.Listener(on_press=lambda key: on_press(key, state))
         listener.start()
 
-        print(c_index + b_index + pyfiglet.figlet_format('MKGIF', font='graffiti') + Fore.RESET + Style.RESET_ALL)
+        #print(c_index + b_index + pyfiglet.figlet_format('MKGIF', font='graffiti') + Fore.RESET + Style.RESET_ALL)
 
         cap = cv2.VideoCapture(args.source)
         state.num_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
@@ -180,6 +180,8 @@ def read_video(args, state: AppState) -> None:
             state.done = False
             cap.release()
             return
+        
+        print(c_index + b_index + pyfiglet.figlet_format('MKGIF', font='graffiti') + Fore.RESET + Style.RESET_ALL)
 
         cap.set(cv2.CAP_PROP_POS_FRAMES, initial_frame)
         state.total_frames = abs(state.num_frames - initial_frame) - abs(final_frame - state.num_frames)
@@ -422,3 +424,8 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+
+
+
+
