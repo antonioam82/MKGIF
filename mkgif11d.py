@@ -121,7 +121,7 @@ def create_gif(args, state: AppState) -> None:
             print("\nSAVING YOUR GIF (PLEASE, WAIT)...")
             duration = 1000 / (state.video_fps * (args.speed / 100))
             #--------------------------------------------------------------------------------------------------
-            print("DURATION: ",duration)##################################################
+            #print("DURATION: ",duration)##################################################
             if duration < 20.0 and args.speed > 100:
                 jump = max(1, round(args.speed / 100))
                 output_frames = output_frames[::jump]########################
