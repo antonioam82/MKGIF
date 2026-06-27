@@ -1,0 +1,2 @@
+[console_scripts]
+mkgif = mkgif:main

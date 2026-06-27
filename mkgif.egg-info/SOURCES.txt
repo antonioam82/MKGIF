@@ -1,0 +1,10 @@
+LICENSE
+README.md
+mkgif.py
+setup.py
+mkgif.egg-info/PKG-INFO
+mkgif.egg-info/SOURCES.txt
+mkgif.egg-info/dependency_links.txt
+mkgif.egg-info/entry_points.txt
+mkgif.egg-info/requires.txt
+mkgif.egg-info/top_level.txt

@@ -22,20 +22,32 @@ El script utiliza las siguientes librerías de Python. Asegúrate de tenerlas in
 pip install opencv-python pillow numpy tqdm colorama pynput pyfiglet pyglet
 
 ------------------------------
-## Uso Básicos
-El script se ejecuta desde la terminal pasando los argumentos necesarios.
+## Modo de uso
 
-python mkgif.py --source video.mp4 --destination resultado.gif [opciones]
+```
+mkgif -src <archivo_origen> [opciones]
+```
 
-## Argumentos Disponibles (Ejemplo de configuración)
+| Opción | Descripción | Por defecto |
+|---|---|---|
+| `-src`, `--source` | Video o WebP animado de origen (obligatorio). Formatos: `.mp4`, `.avi`, `.mov`, `.wmv`, `.rm`, `.gif`, `.webp` | — |
+| `-dest`, `--destination` | Nombre del `.gif` de salida | nombre autogenerado (hash SHA-1) |
+| `-sz`, `--size` | Escala relativa de tamaño, en % (ej. `50` = mitad de tamaño) | 100 |
+| `-spd`, `--speed` | Velocidad relativa, en % (ej. `200` = doble de velocidad) | 100 |
+| `-fps`, `--frames_per_second` | Fotogramas por segundo del GIF resultante | el del vídeo original |
+| `-from`, `--from_frame` | Fotograma inicial desde el que capturar | 0 |
+| `-to`, `--to_frame` | Fotograma final donde detener la captura | último fotograma |
+| `-opt`, `--optimize` | Optimiza paleta/compresión al guardar (más lento) | desactivado |
+| `-shw`, `--show` | Muestra el GIF resultante en una ventana al terminar | desactivado |
+| `-delsrc`, `--delete_source` | Elimina el archivo de origen tras generar el GIF | desactivado |
 
-* --source: Ruta del video o archivo WebP de origen (Obligatorio).
-* --destination: Ruta y nombre del archivo .gif de salida (Obligatorio).
-* --size: Porcentaje de escalado de la imagen (Ej: 50 para reducir a la mitad).
-* --speed: Porcentaje de velocidad del GIF (Ej: 200 para doble de velocidad).
-* --from_frame: Fotograma inicial desde el que empezar a capturar.
-* --to_frame: Fotograma final donde detener la captura.
-* --optimize: Aplica optimización de paleta y compresión de Pillow al guardar.
+### Ejemplo
+
+```bash
+mkgif -src video.mp4 -dest resultado.gif -sz 50 -spd 200 -opt -shw
+```
+
+Durante el proceso, puedes pulsar la **Barra Espaciadora** en cualquier momento para cancelar la conversión de forma segura.
 
 ------------------------------
 ## Estructura del Código
@@ -51,15 +63,4 @@ El script está diseñado modularmente bajo las siguientes funciones clave:
 ## Licencia
 Este proyecto está bajo la licencia MIT. Siéntete libre de clonarlo, modificarlo y mejorar el código.
 ------------------------------
-
-
-
-ARGUMENTS:
--src/--source: Nombre del vídeo original (obligatorio).
--dest/--destination: Nombre del archivo a generar (opcional).
--sz/--size: Tamaño en porcentaje del gif respecto al vídeo original (opcional).
--shw/--show: Muestra resultado en ventana emergente al finalizar el proceso de generado (opcional).
--st/--start: Segundo inicial para gif (opcional).
--e/--end: Segundo final (opcional).
--spd/--speed: Velocidad relativa de la animación (opcional)
 

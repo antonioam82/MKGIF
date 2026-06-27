@@ -1,0 +1,18 @@
+Metadata-Version: 2.4
+Name: mkgif
+Version: 1.0.0
+Summary: Convierte videos y WebP animados en GIFs optimizados desde la linea de comandos
+Requires-Python: >=3.9
+License-File: LICENSE
+Requires-Dist: opencv-python
+Requires-Dist: pillow
+Requires-Dist: numpy
+Requires-Dist: tqdm
+Requires-Dist: colorama
+Requires-Dist: pynput
+Requires-Dist: pyfiglet
+Requires-Dist: pyglet
+Dynamic: license-file
+Dynamic: requires-dist
+Dynamic: requires-python
+Dynamic: summary
