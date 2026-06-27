@@ -1,9 +1,6 @@
 # MKGIF
 Create gifs from videos in command line.
 
-![mkgif.py](mkg.png)
-![mkgif3.py](mk3.png)
-
 ------------------------------
 ## MKGIF - Video & WebP to GIF Converter
 Una herramienta de línea de comandos (CLI) potente, eficiente y personalizable escrita en Python para convertir videos y archivos WebP animados en GIFs optimizados. Cuenta con barras de progreso interactivas, personalización de tamaño/velocidad y la capacidad de cancelar el proceso en tiempo real.
