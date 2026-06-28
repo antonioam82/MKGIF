@@ -19,6 +19,37 @@ El script utiliza las siguientes librerías de Python. Asegúrate de tenerlas in
 pip install opencv-python pillow numpy tqdm colorama pynput pyfiglet pyglet
 
 ------------------------------
+## Instalación
+
+### Opción 1: comando global (recomendado)
+
+```bash
+git clone https://github.com/antonioam82/MKGIF.git
+cd MKGIF
+pip install -e .
+```
+
+Esto instala las dependencias **y** registra el comando `mkgif`, disponible desde cualquier carpeta:
+
+```bash
+mkgif -src video.mp4 -shw
+```
+
+### Opción 2: ejecutar el script directamente
+
+Si no quieres instalar el comando global, solo necesitas las dependencias:
+
+```bash
+pip install -r requirements.txt
+python mkgif.py -src video.mp4 -shw
+```
+
+| | ¿Obligatorio? | Para qué sirve |
+|---|---|---|
+| `pip install -r requirements.txt` | ✅ Sí | Instala las librerías que el script necesita para funcionar |
+| `pip install -e .` | ❌ No, es comodidad | Instala las dependencias y además crea el comando global `mkgif`, para no usar `python` ni rutas |
+
+------------------------------
 ## Modo de uso
 
 ```
