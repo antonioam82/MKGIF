@@ -379,7 +379,7 @@ def get_size_format(b, factor=1024, suffix="B"):
 
 def main():
     parser = argparse.ArgumentParser(
-        prog="mkgif11.py",
+        prog="mkgif",
         conflict_handler='resolve',
         description="Create gifs from various formats in command line.",
         epilog="REPO: https://github.com/antonioam82/MKGIF",
