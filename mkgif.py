@@ -11,6 +11,7 @@ import cv2
 from tqdm import tqdm
 import hashlib
 from pynput import keyboard
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
 from typing import Optional, Generator
 import numpy as np
@@ -103,7 +104,7 @@ def create_gif(args, state: AppState) -> None:
         pbar = tqdm(total=state.total_frames, unit='frames', ncols=100)
         output_frames = []
 
-        for img in state.frame_list:
+        '''for img in state.frame_list:
             resized_frame = resize_frame(img)
             if state.stop or img is None:
                 print(Fore.YELLOW + Style.NORMAL + "\nGif creation interrupted by user." + Fore.RESET + Style.RESET_ALL)
@@ -112,7 +113,22 @@ def create_gif(args, state: AppState) -> None:
                 break
 
             output_frames.append(resized_frame)
-            pbar.update(1)
+            pbar.update(1)'''
+
+        with ThreadPoolExecutor() as executor:
+            futures = executor.map(resize_frame, state.frame_list)
+            for img in futures:
+                if state.stop or img is None:
+                    print(
+                        Fore.YELLOW + Style.NORMAL +
+                        "\nGif creation interrupted by user." +
+                        Fore.RESET + Style.RESET_ALL
+                    )
+                    pbar.disable = True
+                    state.done = False
+                    break
+                output_frames.append(img)
+                pbar.update(1)    
 
         pbar.close()
         listener.stop()
