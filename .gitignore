@@ -10,7 +10,5 @@ venv/
 .venv/
 env/
 .DS_Store
-
-# Archivos generados por la propia herramienta (salidas .gif de prueba)
 *.gif
 !examples/*.gif
