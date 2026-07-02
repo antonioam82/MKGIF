@@ -256,7 +256,7 @@ def calculate_sha1(file_path: str) -> str:
     return sha1_hash.hexdigest()
 
 
-def convert_to_gif(args, state: AppState) -> None:
+'''def convert_to_gif(args, state: AppState) -> None:
     """
     Extract all frames from a .webp animation into state.frame_list so they
     can be processed by the shared create_gif() pipeline (resize, speed, optimize…).
@@ -323,6 +323,90 @@ def convert_to_gif(args, state: AppState) -> None:
             pbar.update(1)
 
         pbar.close()
+        listener.stop()
+        webp.close()
+
+    except Exception as e:
+        if pbar:
+            pbar.close()
+        if listener and listener.is_alive():
+            listener.stop()
+        state.done = False
+        print(Fore.RED + Style.DIM + f"\nUNEXPECTED ERROR: {e}" + Fore.RESET + Style.RESET_ALL)'''
+
+def convert_to_gif(args, state: AppState) -> None:
+    """
+    Extract all frames from a .webp animation into state.frame_list so they
+    can be processed by the shared create_gif() pipeline (resize, speed, optimize...).
+    Falls back to a direct save when the webp has only one frame.
+    """
+    listener = None
+    pbar = None
+    try:
+        listener = keyboard.Listener(on_press=lambda key: on_press(key, state))
+        listener.start()
+ 
+        webp = Image.open(args.source)
+        n_frames = getattr(webp, 'n_frames', 1)
+ 
+        initial_frame = args.from_frame
+        final_frame   = int(args.to_frame) if args.to_frame else n_frames
+ 
+        valid_range = (
+            0 <= initial_frame < n_frames and
+            0 < final_frame <= n_frames and
+            initial_frame < final_frame
+        )
+        if not valid_range:
+            print(Fore.RED + Style.BRIGHT + "FRAME INDEX ERROR: Invalid index for initial or final frame.")
+            print(f"Index value must be in range (0,{n_frames})." + Fore.RESET + Style.RESET_ALL)
+            state.done = False
+            webp.close()
+            return
+ 
+        print(c_index + b_index + pyfiglet.figlet_format('MKGIF', font='graffiti') + Fore.RESET + Style.RESET_ALL)
+ 
+        state.width        = webp.width
+        state.height       = webp.height
+        state.num_frames   = n_frames
+        state.total_frames = final_frame - initial_frame
+ 
+        frame_duration_ms = webp.info.get('duration', 100)
+        state.video_fps   = 1000 / frame_duration_ms if frame_duration_ms > 0 else 10.0
+ 
+        duration_s = state.total_frames / state.video_fps
+        print("SOURCE WEBP DATA:")
+        print(
+            f'NUMBER OF FRAMES: {n_frames} | '
+            f'WIDTH: {state.width} | HEIGHT: {state.height} | '
+            f'FRAME RATE: {state.video_fps:.2f} | DURATION: {duration_s:.2f}s\n'
+        )
+ 
+        print("READING WEBP FRAMES...(PRESS SPACE BAR TO CANCEL)")
+        pbar = tqdm(total=state.total_frames, unit='frames', ncols=100)
+ 
+        # Phase 1: sequential reading
+        raw_frames = []
+        for i in range(initial_frame, final_frame):
+            if state.stop:
+                print(Fore.YELLOW + Style.NORMAL + "\nFrame processing interrupted by user." + Fore.RESET + Style.RESET_ALL)
+                pbar.disable = True
+                state.done = False
+                break
+            webp.seek(i)
+            raw_frames.append(webp.convert('RGBA'))
+            pbar.update(1)
+ 
+        pbar.close()
+ 
+        # Phase 2: RGBA -> RGB conversion.
+        if state.done:
+            def to_rgb_array(frame_rgba: Image.Image) -> np.ndarray:
+                return np.array(frame_rgba.convert('RGB'))
+ 
+            with ThreadPoolExecutor() as executor:
+                state.frame_list = list(executor.map(to_rgb_array, raw_frames))
+ 
         listener.stop()
         webp.close()
 
