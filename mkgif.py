@@ -524,12 +524,17 @@ def main():
 
     if args.destination is None:
         hash_name = calculate_sha1(args.source)
-        if file_extension == '.webp':
+
+        '''if file_extension == '.webp':
             args.destination = f"{hash_name}.gif"
         else:
             speed = int(args.speed)
             size  = int(args.size)
-            args.destination = f"{hash_name}{speed}{size}.gif"
+            args.destination = f"{hash_name}{speed}{size}.gif"'''
+
+        speed = int(args.speed)
+        size = int(args.size)
+        args.destination =  f"{hash_name}{speed}{size}.gif"
 
     if file_extension == '.webp':
         convert_to_gif(args, state)
