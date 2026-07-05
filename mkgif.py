@@ -36,6 +36,7 @@ class AppState:
     num_frames: int = 0
     video_fps: float = 0.0
     total_frames: int = 0
+    frame_durations: list = field(default_factory=list)
 
 
 def check_result_ext(file):
@@ -135,15 +136,29 @@ def create_gif(args, state: AppState) -> None:
 
         if state.done:
             print("\nSAVING YOUR GIF (PLEASE, WAIT)...")
-            duration = 1000 / (state.video_fps * (args.speed / 100))
-            #print("DURATION: ",duration)
-            #--------------------------------------------------------------------------------------------------
-            if duration < 20.0 and args.speed > 100:
-                #print("DURATION: ",duration)##################################################
-                jump = max(1, round(args.speed / 100))
-                output_frames = output_frames[::jump]########################
-                duration = max(1000 / (state.video_fps * (args.speed / 100) / jump), 20)##
-            #--------------------------------------------------------------------------------------------------
+
+            if state.frame_durations:
+                # Source had per-frame timing (e.g. webp): honor each frame's
+                # original duration instead of forcing a single uniform value.
+                speed_factor = args.speed / 100
+                duration = [max(1, d / speed_factor) for d in state.frame_durations]
+
+                min_duration = min(duration)
+                if min_duration < 20.0 and args.speed > 100:
+                    jump = max(1, round(args.speed / 100))
+                    output_frames = output_frames[::jump]
+                    duration = duration[::jump]
+                    duration = [max(d / jump, 20) for d in duration]
+            else:
+                duration = 1000 / (state.video_fps * (args.speed / 100))
+                #print("DURATION: ",duration)
+                #--------------------------------------------------------------------------------------------------
+                if duration < 20.0 and args.speed > 100:
+                    #print("DURATION: ",duration)##################################################
+                    jump = max(1, round(args.speed / 100))
+                    output_frames = output_frames[::jump]########################
+                    duration = max(1000 / (state.video_fps * (args.speed / 100) / jump), 20)##
+                #--------------------------------------------------------------------------------------------------
 
             output_frames[0].save(
                 args.destination,
@@ -387,6 +402,7 @@ def convert_to_gif(args, state: AppState) -> None:
  
         # Phase 1: sequential reading
         raw_frames = []
+        frame_durations = []
         for i in range(initial_frame, final_frame):
             if state.stop:
                 print(Fore.YELLOW + Style.NORMAL + "\nFrame processing interrupted by user." + Fore.RESET + Style.RESET_ALL)
@@ -394,8 +410,11 @@ def convert_to_gif(args, state: AppState) -> None:
                 state.done = False
                 break
             webp.seek(i)
+            frame_durations.append(webp.info.get('duration', frame_duration_ms))
             raw_frames.append(webp.convert('RGBA'))
             pbar.update(1)
+
+        state.frame_durations = frame_durations
  
         pbar.close()
  
