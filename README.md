@@ -13,6 +13,20 @@ Una herramienta de línea de comandos (CLI) potente, eficiente y personalizable 
 * Interfaz colorida: Salida estilizada en la terminal usando arte ASCII y colores dinámicos.
 
 ------------------------------
+
+<p align="center">
+  <img src="screenshots/image1.png" alt="Captura 1" width="900">
+</p>
+
+<p align="center">
+  <img src="screenshots/image2.png" alt="Captura 2" width="900">
+</p>
+
+<p align="center">
+  <img src="screenshots/image3.png" alt="Captura 3" width="900">
+</p>
+
+------------------------------
 ## Requisitos Previos
 El script utiliza las siguientes librerías de Python. Asegúrate de tenerlas instaladas antes de ejecutarlo:
 
