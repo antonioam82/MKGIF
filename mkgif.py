@@ -439,19 +439,23 @@ def main():
 
     args = parser.parse_args()
 
+    if args.source == args.destination:
+        print(Fore.YELLOW + 
+              f"WARNING: Source and destination files are the same. File '{args.source}' will be overwritten!" +
+              Fore.RESET)
+        continue_ = input("Do you want to proceed? [Y, n]: ")
+        if continue_.strip().lower() in ['n', 'no']:
+            print(Fore.RED + Style.BRIGHT + 
+                  "Operation cancelled by user." +
+                  Fore.RESET + Style.RESET_ALL)
+            return
+
     state = AppState()
 
     name, file_extension = os.path.splitext(args.source)
 
     if args.destination is None:
         hash_name = calculate_sha1(args.source)
-
-        '''if file_extension == '.webp':
-            args.destination = f"{hash_name}.gif"
-        else:
-            speed = int(args.speed)
-            size  = int(args.size)
-            args.destination = f"{hash_name}{speed}{size}.gif"'''
 
         speed = int(args.speed)
         size = int(args.size)
