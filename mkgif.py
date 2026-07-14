@@ -362,6 +362,7 @@ def convert_to_gif(args, state: AppState) -> None:
 def show(f: str) -> None:
     print("GENERATING VIEW -PRESS 'ESC' TO CLOSE THE WINDOW-")
     try:
+
         from pyglet.window import key
         with Image.open(f) as img:
             w, h = img.size
