@@ -360,30 +360,31 @@ def convert_to_gif(args, state: AppState) -> None:
 
 
 def show(f: str) -> None:
-    print("GENERATING VIEW -PRESS 'ESC' TO CLOSE THE WINDOW-")
     try:
+        if os.path.exists(f):
+             
+            print("GENERATING VIEW -PRESS 'ESC' TO CLOSE THE WINDOW-")
+            from pyglet.window import key
+            with Image.open(f) as img:
+                w, h = img.size
 
-        from pyglet.window import key
-        with Image.open(f) as img:
-            w, h = img.size
+            animation = pyglet.image.load_animation(f)
+            binm = pyglet.image.atlas.TextureBin()
+            animation.add_to_texture_bin(binm)
+            window = pyglet.window.Window(w, h, 'GIF VIEW')
+            sprite = pyglet.sprite.Sprite(animation)
 
-        animation = pyglet.image.load_animation(f)
-        binm = pyglet.image.atlas.TextureBin()
-        animation.add_to_texture_bin(binm)
-        window = pyglet.window.Window(w, h, 'GIF VIEW')
-        sprite = pyglet.sprite.Sprite(animation)
+            @window.event
+            def on_draw():
+                sprite.draw()
 
-        @window.event
-        def on_draw():
-            sprite.draw()
+            @window.event
+            def on_key_press(symbol, modifiers):
+                if symbol == key.ESCAPE:
+                    window.close()
 
-        @window.event
-        def on_key_press(symbol, modifiers):
-            if symbol == key.ESCAPE:
-                window.close()
-
-        pyglet.app.run()
-        print(f"Successfully generated view from '{f}'.")
+            pyglet.app.run()
+            print(f"Successfully generated view from '{f}'.")
     except Exception as e:
         print(Fore.RED + Style.BRIGHT + f"UNEXPECTED ERROR: {e}" + Fore.RESET + Style.RESET_ALL)
 
