@@ -471,7 +471,7 @@ def main():
     if not state.stop and state.done:
         create_gif(args, state)
 
-    if args.delete_source:
+    if args.delete_source and args.source != args.destination:
         os.remove(args.source)
         print(f"Removed file '{args.source}'.")
 
