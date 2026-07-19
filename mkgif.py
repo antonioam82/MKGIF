@@ -363,7 +363,7 @@ def show(f: str) -> None:
     try:
         if os.path.exists(f):
              
-            print("GENERATING VIEW -PRESS 'ESC' TO CLOSE THE WINDOW-")
+            print("GENERATING VIEW...")
             from pyglet.window import key
             with Image.open(f) as img:
                 w, h = img.size
@@ -383,7 +383,7 @@ def show(f: str) -> None:
                 if symbol == key.ESCAPE:
                     window.close()
 
-            print(f"Started view from '{f}'.")
+            print(f"Started view from '{f}' -PRESS 'ESC' TO CLOSE THE WINDOW-.")
             pyglet.app.run()
             print(f"Successfully generated view from '{f}'.")
 
