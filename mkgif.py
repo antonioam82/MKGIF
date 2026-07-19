@@ -383,8 +383,10 @@ def show(f: str) -> None:
                 if symbol == key.ESCAPE:
                     window.close()
 
+            print(f"Started view from '{f}'.")
             pyglet.app.run()
             print(f"Successfully generated view from '{f}'.")
+
     except Exception as e:
         print(Fore.RED + Style.BRIGHT + f"UNEXPECTED ERROR: {e}" + Fore.RESET + Style.RESET_ALL)
 
