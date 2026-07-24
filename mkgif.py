@@ -198,9 +198,18 @@ def read_video(args, state: AppState) -> None:
         state.height     = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
         state.video_fps  = cap.get(cv2.CAP_PROP_FPS)
         duration         = state.num_frames / state.video_fps
+        
+        #---------------------------------------------------------------------------------
+        if args.from_second:
+            initial_frame = int(args.from_second * state.video_fps)
+        else:
+            initial_frame = args.from_frame
 
-        initial_frame = args.from_frame
-        final_frame   = int(args.to_frame) if args.to_frame else int(state.num_frames)
+        if args.to_second:
+            final_frame = int(args.to_second * state.video_fps)
+        else:
+            final_frame = int(args.to_frame) if args.to_frame else int(state.num_frames)
+        #---------------------------------------------------------------------------------
 
         valid_range = (
             0 <= initial_frame <= state.num_frames and
@@ -437,9 +446,17 @@ def main():
     parser.add_argument('-fps','--frames_per_second',default=None,type=check_positive,help='Frame rate')
     parser.add_argument('-spd','--speed',default=100,type=check_positive,help='Speed of the gif as a percentage of the original (100 by default)')
     parser.add_argument('-shw','--show',action='store_true',help='Show result file')
-    parser.add_argument('-from','--from_frame',default=0,type=check_index,help='Starting frame')
-    parser.add_argument('-to','--to_frame',default=None,type=check_index,   help='Ending frame')
+    #parser.add_argument('-from','--from_frame',default=0,type=check_index,help='Starting frame')
+    #parser.add_argument('-to','--to_frame',default=None,type=check_index,   help='Ending frame')
     parser.add_argument('-opt','--optimize',action='store_true',help='Optimize gif file size (slower save)')
+
+    group_from = parser.add_mutually_exclusive_group()
+    group_from.add_argument('-from','--from_frame',default=0,type=check_index,help='Starting frame')
+    group_from.add_argument('-fromsec','--from_second',default=None,type=check_index,help='Starting second')
+
+    group_to = parser.add_mutually_exclusive_group()
+    group_to.add_argument('-to','--to_frame',default=None,type=check_index,help='Ending frame')
+    group_to.add_argument('-tosec','--to_second',default=None,type=check_index,help='Ending second')
 
     args = parser.parse_args()
 
