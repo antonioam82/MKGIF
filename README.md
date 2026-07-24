@@ -78,6 +78,8 @@ mkgif -src <archivo_origen> [opciones]
 | `-spd`, `--speed` | Velocidad relativa, en % (ej. `200` = doble de velocidad) | 100 |
 | `-fps`, `--frames_per_second` | Fotogramas por segundo del GIF resultante | el del vídeo original |
 | `-from`, `--from_frame` | Fotograma inicial desde el que capturar | 0 |
+| `-fromsec`, `--from_second` | Segundo inicial desde el que capturar | None |
+| `-tosec`, `--to_second` | Segundo final desde el que capturar | None |
 | `-to`, `--to_frame` | Fotograma final donde detener la captura | último fotograma |
 | `-opt`, `--optimize` | Optimiza paleta/compresión al guardar (más lento) | desactivado |
 | `-shw`, `--show` | Muestra el GIF resultante en una ventana al terminar | desactivado |
